@@ -47,6 +47,16 @@
                             <p class="text-sm font-medium text-gray-700">Aprovado</p>
                         </div>
                         
+                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['em_separacao', 'pronto_para_retirada', 'retirado'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                        
+                        <div class="flex flex-col items-center text-center flex-1">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 
+                                {% if pedido.status in ['em_separacao', 'pronto_para_retirada', 'retirado'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-700">Em<br>Separação</p>
+                        </div>
+                        
                         <div class="flex-1 h-1 mx-2 {% if pedido.status in ['pronto_para_retirada', 'retirado'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
                         
                         <div class="flex flex-col items-center text-center flex-1">
@@ -86,6 +96,16 @@
                                 <i class="fas fa-check-double"></i>
                             </div>
                             <p class="text-sm font-medium text-gray-700">Aprovado</p>
+                        </div>
+                        
+                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['em_separacao', 'saiu_para_entrega', 'entregue'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                        
+                        <div class="flex flex-col items-center text-center flex-1">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 
+                                {% if pedido.status in ['em_separacao', 'saiu_para_entrega', 'entregue'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-700">Em<br>Separação</p>
                         </div>
                         
                         <div class="flex-1 h-1 mx-2 {% if pedido.status in ['saiu_para_entrega', 'entregue'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
