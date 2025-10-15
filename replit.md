@@ -22,13 +22,15 @@ ecommerce/
 │   │   ├── auth.py         # Autenticação e usuários
 │   │   ├── shop.py         # Loja e catálogo
 │   │   ├── cart.py         # Carrinho e checkout
-│   │   └── admin.py        # Painel administrativo
+│   │   ├── admin.py        # Painel administrativo
+│   │   └── customer.py     # Área do cliente
 │   ├── models/             # Modelos de dados
 │   ├── templates/          # Templates Jinja2
 │   │   ├── layouts/       # Layouts base
 │   │   ├── auth/          # Páginas de autenticação
 │   │   ├── shop/          # Páginas da loja
-│   │   └── admin/         # Painel administrativo
+│   │   ├── admin/         # Painel administrativo
+│   │   └── customer/      # Área do cliente
 │   ├── static/            # Arquivos estáticos
 │   │   ├── css/          # Estilos
 │   │   ├── js/           # JavaScript
@@ -83,10 +85,20 @@ ecommerce/
 - Logs de atividades administrativas
 - **Configurações da Loja**: Permite configurar nome, descrição, email, telefone e endereço
 
+### ✅ Área do Cliente (Nova!)
+- **Dashboard Profissional**: Estatísticas de compras, pedidos recentes, acesso rápido
+- **Gerenciamento de Pedidos**: Visualização completa com filtros por status
+- **Detalhes do Pedido**: Timeline visual de rastreamento, informações completas
+- **Cancelamento de Pedidos**: Cliente pode cancelar pedidos pendentes (estoque é reajustado)
+- **Configurações da Conta**: Atualização de dados pessoais e foto de perfil
+- **Alteração de Senha**: Sistema seguro com validação
+- **Design Premium**: Interface moderna e responsiva
+
 ### ✅ Interface Responsiva
 - Design com Tailwind CSS
 - Compatível com mobile e desktop
 - **Painel Administrativo Responsivo**: Layout híbrido com tabelas para desktop e cards otimizados para mobile
+- **Área do Cliente Responsiva**: Dashboard e pedidos otimizados para todas as telas
 - Todas as páginas administrativas (categorias, produtos, usuários, pedidos) com paridade completa de dados entre desktop e mobile
 - Navegação intuitiva
 - Feedbacks visuais
@@ -114,6 +126,7 @@ python main.py
 ### 3. Acessar
 - URL: `http://localhost:5000`
 - Painel Admin: Login com credenciais de admin
+- Área do Cliente: Login com credenciais de cliente (após login, acesso via menu do usuário)
 
 ## Banco de Dados
 
