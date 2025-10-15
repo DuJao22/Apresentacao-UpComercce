@@ -86,6 +86,8 @@ ecommerce/
 ### ✅ Interface Responsiva
 - Design com Tailwind CSS
 - Compatível com mobile e desktop
+- **Painel Administrativo Responsivo**: Layout híbrido com tabelas para desktop e cards otimizados para mobile
+- Todas as páginas administrativas (categorias, produtos, usuários, pedidos) com paridade completa de dados entre desktop e mobile
 - Navegação intuitiva
 - Feedbacks visuais
 
