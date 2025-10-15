@@ -134,7 +134,7 @@ def checkout():
         
         session.pop('cart', None)
         flash('Pedido realizado com sucesso!', 'success')
-        return redirect(url_for('auth.profile'))
+        return redirect(url_for('customer.pedidos'))
     
     cart_items = []
     total = 0

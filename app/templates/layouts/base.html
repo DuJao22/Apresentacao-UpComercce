@@ -53,12 +53,15 @@
                                 <i class="fas fa-chevron-down text-sm"></i>
                             </button>
                             <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-10">
-                                <a href="{{ url_for('auth.profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Meu Perfil</a>
                                 {% if session.user_role == 'admin' %}
-                                <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Painel Admin</a>
+                                <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fas fa-tachometer-alt mr-2"></i>Painel Admin</a>
+                                <a href="{{ url_for('auth.change_password') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fas fa-lock mr-2"></i>Alterar Senha</a>
+                                {% else %}
+                                <a href="{{ url_for('customer.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fas fa-home mr-2"></i>Minha Conta</a>
+                                <a href="{{ url_for('customer.pedidos') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fas fa-box mr-2"></i>Meus Pedidos</a>
+                                <a href="{{ url_for('customer.configuracoes') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="fas fa-cog mr-2"></i>Configurações</a>
                                 {% endif %}
-                                <a href="{{ url_for('auth.change_password') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Alterar Senha</a>
-                                <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Sair</a>
+                                <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100"><i class="fas fa-sign-out-alt mr-2"></i>Sair</a>
                             </div>
                         </div>
                     {% else %}

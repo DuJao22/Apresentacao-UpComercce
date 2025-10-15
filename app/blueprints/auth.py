@@ -29,7 +29,7 @@ def login():
             
             if user['perfil'] == 'admin':
                 return redirect(url_for('admin.dashboard'))
-            return redirect(url_for('shop.index'))
+            return redirect(url_for('customer.dashboard'))
         else:
             flash('Email ou senha incorretos.', 'danger')
     
