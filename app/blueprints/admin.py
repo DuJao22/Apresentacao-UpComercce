@@ -373,6 +373,8 @@ def configuracoes():
         email_contato = request.form.get('email_contato')
         telefone_contato = request.form.get('telefone_contato')
         endereco = request.form.get('endereco')
+        local_retirada = request.form.get('local_retirada')
+        email_notificacao = request.form.get('email_notificacao')
         
         config_exists = query_db('SELECT id FROM configuracoes_loja WHERE id = 1', one=True)
         
@@ -380,14 +382,15 @@ def configuracoes():
             execute_db('''
                 UPDATE configuracoes_loja 
                 SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
-                    telefone_contato = ?, endereco = ?, atualizado_em = CURRENT_TIMESTAMP
+                    telefone_contato = ?, endereco = ?, local_retirada = ?, 
+                    email_notificacao = ?, atualizado_em = CURRENT_TIMESTAMP
                 WHERE id = 1
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco))
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao))
         else:
             execute_db('''
-                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, endereco)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco))
+                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao))
         
         execute_db('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
                    (session['user_id'], 'atualizar_configuracoes', 'Configurações da loja atualizadas'))
@@ -402,6 +405,8 @@ def configuracoes():
             'descricao_loja': 'Sua loja online de perfumes, roupas e acessórios.',
             'email_contato': 'contato@eshop.com',
             'telefone_contato': '(00) 0000-0000',
-            'endereco': ''
+            'endereco': '',
+            'local_retirada': '',
+            'email_notificacao': ''
         }
     return render_template('admin/configuracoes.html', config=config)

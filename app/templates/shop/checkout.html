@@ -10,11 +10,56 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
         <div class="lg:col-span-2">
+            {% if local_retirada %}
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Tipo de Entrega</h3>
+                <div class="space-y-3">
+                    <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="tipo_entrega" value="entrega" checked
+                               onchange="document.getElementById('endereco-entrega-section').style.display='block'; document.getElementById('retirada-info').style.display='none';"
+                               class="mt-1 mr-3 text-indigo-600 focus:ring-indigo-500">
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800">
+                                <i class="fas fa-truck mr-2 text-indigo-600"></i>Entrega em Casa
+                            </p>
+                            <p class="text-sm text-gray-600 mt-1">Receba em seu endereço</p>
+                        </div>
+                    </label>
+                    
+                    <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="tipo_entrega" value="retirada"
+                               onchange="document.getElementById('endereco-entrega-section').style.display='none'; document.getElementById('retirada-info').style.display='block';"
+                               class="mt-1 mr-3 text-indigo-600 focus:ring-indigo-500">
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800">
+                                <i class="fas fa-store mr-2 text-indigo-600"></i>Retirar no Local
+                            </p>
+                            <p class="text-sm text-gray-600 mt-1">Retire pessoalmente</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div id="retirada-info" style="display: none;" class="mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                    <p class="text-sm font-semibold text-indigo-900 mb-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Local de Retirada:
+                    </p>
+                    <p class="text-sm text-indigo-800 whitespace-pre-line">{{ local_retirada }}</p>
+                </div>
+            </div>
+            
+            <div id="endereco-entrega-section" class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Endereço de Entrega</h3>
+                <textarea name="endereco" id="endereco_entrega" rows="4" placeholder="Rua, número, bairro, cidade, estado, CEP..."
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+            {% else %}
             <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Endereço de Entrega</h3>
                 <textarea name="endereco" rows="4" required placeholder="Rua, número, bairro, cidade, estado, CEP..."
                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <input type="hidden" name="tipo_entrega" value="entrega">
             </div>
+            {% endif %}
             
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Método de Pagamento</h3>

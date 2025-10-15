@@ -97,7 +97,8 @@ def checkout():
         return redirect(url_for('shop.index'))
     
     if request.method == 'POST':
-        endereco = request.form.get('endereco')
+        tipo_entrega = request.form.get('tipo_entrega', 'entrega')
+        endereco = request.form.get('endereco', '')
         metodo_pagamento = request.form.get('metodo_pagamento')
         observacoes = request.form.get('observacoes', '')
         
@@ -108,9 +109,9 @@ def checkout():
                 total += produto['preco'] * item['quantity']
         
         pedido_id = execute_db('''
-            INSERT INTO pedidos (usuario_id, total, status, metodo_pagamento, endereco_entrega, observacoes)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (session['user_id'], total, 'pendente', metodo_pagamento, endereco, observacoes))
+            INSERT INTO pedidos (usuario_id, total, status, metodo_pagamento, endereco_entrega, observacoes, tipo_entrega)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (session['user_id'], total, 'pendente', metodo_pagamento, endereco, observacoes, tipo_entrega))
         
         for product_id, item in cart.items():
             produto = query_db('SELECT * FROM produtos WHERE id = ?', [product_id], one=True)
@@ -145,4 +146,7 @@ def checkout():
             })
             total += subtotal
     
-    return render_template('shop/checkout.html', cart_items=cart_items, total=total)
+    config = query_db('SELECT local_retirada FROM configuracoes_loja WHERE id = 1', one=True)
+    local_retirada = config['local_retirada'] if config and config['local_retirada'] else None
+    
+    return render_template('shop/checkout.html', cart_items=cart_items, total=total, local_retirada=local_retirada)
