@@ -12,24 +12,24 @@
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {% if produtos %}
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {% for produto in produtos %}
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-            <a href="{{ url_for('shop.produto', id=produto.id) }}">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all flex flex-col">
+            <a href="{{ url_for('shop.produto', id=produto.id) }}" class="block">
                 {% if produto.imagem_principal %}
                 <img src="{{ url_for('static', filename=produto.imagem_principal) }}" 
-                     class="w-full h-48 object-cover">
+                     class="w-full h-48 md:h-56 object-cover">
                 {% else %}
-                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                <div class="w-full h-48 md:h-56 bg-gray-200 flex items-center justify-center">
                     <i class="fas fa-image text-gray-400 text-4xl"></i>
                 </div>
                 {% endif %}
             </a>
-            <div class="p-4">
-                <h3 class="text-lg font-bold text-gray-800 mb-2">{{ produto.nome }}</h3>
-                <p class="text-2xl font-bold text-indigo-600 mb-4">R$ {{ "%.2f"|format(produto.preco) }}</p>
+            <div class="p-3 md:p-4 flex-1 flex flex-col">
+                <h3 class="text-base md:text-lg font-bold text-gray-800 mb-2 line-clamp-2 min-h-[3rem]">{{ produto.nome }}</h3>
+                <p class="text-xl md:text-2xl font-bold text-indigo-600 mb-3 md:mb-4">R$ {{ "%.2f"|format(produto.preco) }}</p>
                 <a href="{{ url_for('shop.produto', id=produto.id) }}" 
-                   class="block w-full bg-indigo-600 text-white text-center py-2 rounded-lg hover:bg-indigo-700">
+                   class="block w-full bg-indigo-600 text-white text-center py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm md:text-base mt-auto">
                     Ver Detalhes
                 </a>
             </div>
@@ -37,7 +37,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <p class="text-center text-gray-600 py-12">Nenhum produto encontrado nesta categoria.</p>
+    <p class="text-center text-gray-600 py-12 text-sm md:text-base">Nenhum produto encontrado nesta categoria.</p>
     {% endif %}
 </div>
 {% endblock %}

@@ -55,7 +55,7 @@
     </div>
     
     <!-- Tabela Desktop -->
-    <div class="hidden md:block bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="hidden md:block bg-white rounded-lg shadow-lg overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
@@ -113,20 +113,20 @@
     <div class="md:hidden space-y-4">
         {% for produto in produtos %}
         <div class="bg-white rounded-lg shadow-lg p-4">
-            <div class="flex gap-4">
+            <div class="flex gap-3">
                 {% if produto.imagem_principal %}
-                <img src="{{ url_for('static', filename=produto.imagem_principal) }}" class="w-20 h-20 object-cover rounded">
+                <img src="{{ url_for('static', filename=produto.imagem_principal) }}" class="w-20 h-20 object-cover rounded flex-shrink-0">
                 {% else %}
                 <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-image text-gray-400"></i>
                 </div>
                 {% endif %}
-                <div class="flex-1">
-                    <h3 class="text-lg font-bold text-gray-800">{{ produto.nome }}</h3>
-                    <p class="text-sm text-gray-600">{{ produto.categoria_nome }}</p>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span class="text-lg font-bold text-indigo-600">R$ {{ "%.2f"|format(produto.preco) }}</span>
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-base md:text-lg font-bold text-gray-800 break-words line-clamp-2">{{ produto.nome }}</h3>
+                    <p class="text-xs md:text-sm text-gray-600 truncate">{{ produto.categoria_nome }}</p>
+                    <div class="flex flex-wrap items-center gap-2 mt-2">
+                        <span class="text-base md:text-lg font-bold text-indigo-600 whitespace-nowrap">R$ {{ "%.2f"|format(produto.preco) }}</span>
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap
                             {% if produto.ativo %}bg-green-100 text-green-800
                             {% else %}bg-red-100 text-red-800{% endif %}">
                             {% if produto.ativo %}Ativo{% else %}Inativo{% endif %}
@@ -135,17 +135,18 @@
                 </div>
             </div>
             <div class="pt-3 mt-3 border-t border-gray-200">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600">
-                        <strong>SKU:</strong> {{ produto.sku }} | <strong>Estoque:</strong> {{ produto.quantidade_estoque }}
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+                    <span class="text-xs md:text-sm text-gray-600 break-words">
+                        <strong>SKU:</strong> <span class="break-all">{{ produto.sku }}</span><br class="sm:hidden">
+                        <span class="hidden sm:inline"> | </span><strong>Estoque:</strong> {{ produto.quantidade_estoque }}
                     </span>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 flex-wrap">
                     <a href="{{ url_for('admin.editar_produto', id=produto.id) }}" 
-                       class="text-indigo-600 hover:underline text-sm font-semibold">Editar</a>
+                       class="text-indigo-600 hover:underline text-sm font-semibold whitespace-nowrap">Editar</a>
                     <form method="POST" action="{{ url_for('admin.toggle_produto_status', id=produto.id) }}" class="inline">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="text-yellow-600 hover:underline text-sm font-semibold">
+                        <button type="submit" class="text-yellow-600 hover:underline text-sm font-semibold whitespace-nowrap">
                             {% if produto.ativo %}Desativar{% else %}Ativar{% endif %}
                         </button>
                     </form>

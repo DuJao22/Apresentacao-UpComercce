@@ -7,7 +7,7 @@
     <h1 class="text-3xl font-bold text-gray-800 mb-8">Gerenciar Usuários</h1>
     
     <!-- Tabela Desktop -->
-    <div class="hidden md:block bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="hidden md:block bg-white rounded-lg shadow-lg overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
@@ -72,19 +72,23 @@
     <div class="md:hidden space-y-4">
         {% for usuario in usuarios %}
         <div class="bg-white rounded-lg shadow-lg p-4">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800">{{ usuario.nome }}</h3>
-                    <p class="text-sm text-gray-600">{{ usuario.email }}</p>
-                    <p class="text-sm text-gray-600">CPF: {{ usuario.cpf }} | ID: {{ usuario.id }}</p>
+            <div class="flex justify-between items-start gap-3 mb-3">
+                <div class="min-w-0 flex-1">
+                    <h3 class="text-lg font-bold text-gray-800 break-words">{{ usuario.nome }}</h3>
+                    <p class="text-sm text-gray-600 break-all">{{ usuario.email }}</p>
+                    <p class="text-xs md:text-sm text-gray-600 mt-1">
+                        <span class="font-semibold">CPF:</span> {{ usuario.cpf }}<br class="sm:hidden">
+                        <span class="hidden sm:inline"> | </span>
+                        <span class="font-semibold">ID:</span> {{ usuario.id }}
+                    </p>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <span class="px-2 py-1 rounded-full text-xs font-semibold
+                <div class="flex flex-col gap-1 flex-shrink-0">
+                    <span class="px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap
                         {% if usuario.perfil == 'admin' %}bg-purple-100 text-purple-800
                         {% else %}bg-blue-100 text-blue-800{% endif %}">
                         {{ usuario.perfil|title }}
                     </span>
-                    <span class="px-2 py-1 rounded-full text-xs font-semibold
+                    <span class="px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap
                         {% if usuario.ativo %}bg-green-100 text-green-800
                         {% else %}bg-red-100 text-red-800{% endif %}">
                         {% if usuario.ativo %}Ativo{% else %}Inativo{% endif %}
@@ -92,13 +96,13 @@
                 </div>
             </div>
             <div class="pt-3 border-t border-gray-200">
-                <div class="flex gap-2 mb-2">
+                <div class="flex gap-2 mb-2 flex-wrap">
                     <button onclick="document.getElementById('reset-mobile-{{ usuario.id }}').classList.toggle('hidden')"
-                            class="text-indigo-600 hover:underline text-sm font-semibold">Resetar Senha</button>
+                            class="text-indigo-600 hover:underline text-sm font-semibold whitespace-nowrap">Resetar Senha</button>
                     {% if usuario.perfil != 'admin' %}
                     <form method="POST" action="{{ url_for('admin.toggle_usuario_status', id=usuario.id) }}" class="inline">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="text-yellow-600 hover:underline text-sm font-semibold">
+                        <button type="submit" class="text-yellow-600 hover:underline text-sm font-semibold whitespace-nowrap">
                             {% if usuario.ativo %}Desativar{% else %}Ativar{% endif %}
                         </button>
                     </form>
@@ -108,8 +112,8 @@
                       class="hidden mt-2 flex gap-2">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="password" name="nova_senha" placeholder="Nova senha" required
-                           class="flex-1 px-3 py-2 border rounded text-sm">
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm">OK</button>
+                           class="flex-1 min-w-0 px-3 py-2 border rounded text-sm">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm whitespace-nowrap">OK</button>
                 </form>
             </div>
         </div>
