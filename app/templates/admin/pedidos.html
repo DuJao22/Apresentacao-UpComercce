@@ -42,11 +42,21 @@
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 rounded-full text-xs font-semibold
                             {% if pedido.status == 'pendente' %}bg-yellow-100 text-yellow-800
-                            {% elif pedido.status == 'aprovado' %}bg-green-100 text-green-800
-                            {% elif pedido.status == 'enviado' %}bg-blue-100 text-blue-800
+                            {% elif pedido.status == 'confirmado' %}bg-blue-100 text-blue-800
+                            {% elif pedido.status == 'em_separacao' %}bg-purple-100 text-purple-800
+                            {% elif pedido.status == 'pronto_retirada' %}bg-indigo-100 text-indigo-800
+                            {% elif pedido.status == 'saiu_entrega' %}bg-orange-100 text-orange-800
                             {% elif pedido.status == 'entregue' %}bg-green-100 text-green-800
-                            {% else %}bg-red-100 text-red-800{% endif %}">
-                            {{ pedido.status|title }}
+                            {% elif pedido.status == 'cancelado' %}bg-red-100 text-red-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {% if pedido.status == 'pendente' %}⏳ Pendente
+                            {% elif pedido.status == 'confirmado' %}✅ Confirmado
+                            {% elif pedido.status == 'em_separacao' %}📦 Em Separação
+                            {% elif pedido.status == 'pronto_retirada' %}✨ Pronto Retirada
+                            {% elif pedido.status == 'saiu_entrega' %}🚚 Saiu Entrega
+                            {% elif pedido.status == 'entregue' %}🎉 Entregue
+                            {% elif pedido.status == 'cancelado' %}❌ Cancelado
+                            {% else %}{{ pedido.status|title }}{% endif %}
                         </span>
                     </td>
                     <td class="px-6 py-4">{{ pedido.criado_em }}</td>
@@ -72,11 +82,21 @@
                 </div>
                 <span class="px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 self-start
                     {% if pedido.status == 'pendente' %}bg-yellow-100 text-yellow-800
-                    {% elif pedido.status == 'aprovado' %}bg-green-100 text-green-800
-                    {% elif pedido.status == 'enviado' %}bg-blue-100 text-blue-800
+                    {% elif pedido.status == 'confirmado' %}bg-blue-100 text-blue-800
+                    {% elif pedido.status == 'em_separacao' %}bg-purple-100 text-purple-800
+                    {% elif pedido.status == 'pronto_retirada' %}bg-indigo-100 text-indigo-800
+                    {% elif pedido.status == 'saiu_entrega' %}bg-orange-100 text-orange-800
                     {% elif pedido.status == 'entregue' %}bg-green-100 text-green-800
-                    {% else %}bg-red-100 text-red-800{% endif %}">
-                    {{ pedido.status|title }}
+                    {% elif pedido.status == 'cancelado' %}bg-red-100 text-red-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {% if pedido.status == 'pendente' %}⏳ Pendente
+                    {% elif pedido.status == 'confirmado' %}✅ Confirmado
+                    {% elif pedido.status == 'em_separacao' %}📦 Separação
+                    {% elif pedido.status == 'pronto_retirada' %}✨ Pronto
+                    {% elif pedido.status == 'saiu_entrega' %}🚚 Em Entrega
+                    {% elif pedido.status == 'entregue' %}🎉 Entregue
+                    {% elif pedido.status == 'cancelado' %}❌ Cancelado
+                    {% else %}{{ pedido.status|title }}{% endif %}
                 </span>
             </div>
             <div class="mb-2">

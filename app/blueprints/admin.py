@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, jsonify
 from werkzeug.security import generate_password_hash
 from app.utils.db import query_db, execute_db, get_db
 from app.utils.helpers import save_image, format_currency
@@ -410,3 +410,33 @@ def configuracoes():
             'email_notificacao': ''
         }
     return render_template('admin/configuracoes.html', config=config)
+
+@admin_bp.route('/check-new-orders')
+@admin_required
+def check_new_orders():
+    pending_count = query_db('SELECT COUNT(*) as count FROM pedidos WHERE status = ?', ['pendente'], one=True)['count']
+    
+    latest_order = query_db('''
+        SELECT p.id, p.total, u.nome as cliente_nome
+        FROM pedidos p
+        JOIN usuarios u ON p.usuario_id = u.id
+        ORDER BY p.criado_em DESC
+        LIMIT 1
+    ''', one=True)
+    
+    if latest_order:
+        return jsonify({
+            'has_new_orders': pending_count > 0,
+            'pending_count': pending_count,
+            'latest_order_id': latest_order['id'],
+            'customer_name': latest_order['cliente_nome'],
+            'total': float(latest_order['total'])
+        })
+    
+    return jsonify({
+        'has_new_orders': False,
+        'pending_count': 0,
+        'latest_order_id': 0,
+        'customer_name': '',
+        'total': 0.0
+    })

@@ -53,4 +53,16 @@ def create_app():
             }
         return {'store_config': config}
     
+    @app.context_processor
+    def inject_admin_notifications():
+        from app.utils.db import query_db
+        if session.get('user_role') == 'admin':
+            pedidos_pendentes = query_db(
+                'SELECT COUNT(*) as count FROM pedidos WHERE status = ?', 
+                ['pendente'], 
+                one=True
+            )['count']
+            return {'pedidos_pendentes_count': pedidos_pendentes}
+        return {'pedidos_pendentes_count': 0}
+    
     return app
