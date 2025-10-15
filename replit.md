@@ -84,6 +84,20 @@ ecommerce/
 - Exportação CSV
 - Logs de atividades administrativas
 - **Configurações da Loja**: Permite configurar nome, descrição, email, telefone e endereço
+- **Sistema de Notificações em Tempo Real**:
+  - Badge de notificação com contagem de pedidos pendentes
+  - Pop-ups visuais na tela para novos pedidos
+  - Notificações push do navegador
+  - Som de alerta para novos pedidos
+  - Verificação automática a cada 10 segundos
+- **Status Detalhados de Pedidos**:
+  - ⏳ Pendente (Aguardando Confirmação)
+  - ✅ Confirmado (Pedido Aceito)
+  - 📦 Em Separação (Preparando Pedido)
+  - ✨ Pronto para Retirada (para retirada no local)
+  - 🚚 Saiu para Entrega (para entrega em casa)
+  - 🎉 Entregue/Retirado
+  - ❌ Cancelado
 
 ### ✅ Área do Cliente (Nova!)
 - **Dashboard Profissional**: Estatísticas de compras, pedidos recentes, acesso rápido
