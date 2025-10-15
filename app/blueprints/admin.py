@@ -363,3 +363,45 @@ def logs():
     ''')
     
     return render_template('admin/logs.html', logs=logs)
+
+@admin_bp.route('/configuracoes', methods=['GET', 'POST'])
+@admin_required
+def configuracoes():
+    if request.method == 'POST':
+        nome_loja = request.form.get('nome_loja')
+        descricao_loja = request.form.get('descricao_loja')
+        email_contato = request.form.get('email_contato')
+        telefone_contato = request.form.get('telefone_contato')
+        endereco = request.form.get('endereco')
+        
+        config_exists = query_db('SELECT id FROM configuracoes_loja WHERE id = 1', one=True)
+        
+        if config_exists:
+            execute_db('''
+                UPDATE configuracoes_loja 
+                SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
+                    telefone_contato = ?, endereco = ?, atualizado_em = CURRENT_TIMESTAMP
+                WHERE id = 1
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco))
+        else:
+            execute_db('''
+                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, endereco)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco))
+        
+        execute_db('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
+                   (session['user_id'], 'atualizar_configuracoes', 'Configurações da loja atualizadas'))
+        
+        flash('Configurações atualizadas com sucesso!', 'success')
+        return redirect(url_for('admin.configuracoes'))
+    
+    config = query_db('SELECT * FROM configuracoes_loja WHERE id = 1', one=True)
+    if not config:
+        config = {
+            'nome_loja': 'E-Shop',
+            'descricao_loja': 'Sua loja online de perfumes, roupas e acessórios.',
+            'email_contato': 'contato@eshop.com',
+            'telefone_contato': '(00) 0000-0000',
+            'endereco': ''
+        }
+    return render_template('admin/configuracoes.html', config=config)

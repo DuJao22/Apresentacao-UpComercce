@@ -81,6 +81,7 @@ ecommerce/
 - Sistema de faturamento com relatórios
 - Exportação CSV
 - Logs de atividades administrativas
+- **Configurações da Loja**: Permite configurar nome, descrição, email, telefone e endereço
 
 ### ✅ Interface Responsiva
 - Design com Tailwind CSS
@@ -123,6 +124,7 @@ python main.py
 - `pedidos` - Pedidos realizados
 - `pedido_itens` - Itens de cada pedido
 - `logs_admin` - Logs de atividades administrativas
+- `configuracoes_loja` - Configurações personalizáveis da loja (nome, contatos, etc.)
 
 ## Segurança Implementada
 - ✅ Hashing de senhas com Werkzeug
@@ -156,9 +158,29 @@ cp ecommerce.db ecommerce.db.backup
 python init_db.py  # Remove e recria o banco
 ```
 
+## Sistema de Configurações da Loja
+
+O administrador pode personalizar as informações da loja através do painel administrativo:
+
+### Configurações Disponíveis
+- **Nome da Loja**: Aparece no cabeçalho e rodapé
+- **Descrição**: Texto descritivo no rodapé
+- **Email de Contato**: Exibido na seção de contato
+- **Telefone**: Número de contato da loja
+- **Endereço** (opcional): Localização física da loja
+
+### Acesso
+1. Fazer login como administrador
+2. Acessar o Painel Administrativo
+3. Clicar em "Configurações"
+4. Editar as informações desejadas
+5. Salvar
+
+⚠️ **Nota**: O crédito "Desenvolvido por João Layon" é fixo e não pode ser alterado.
+
 ## Créditos
 Sistema desenvolvido por **João Layon** com Flask, SQLite3 e Tailwind CSS.
 
 ---
 
-**Última atualização**: Outubro 2025
+**Última atualização**: 15 de Outubro de 2025

@@ -1,0 +1,97 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Configurações da Loja{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Configurações da Loja</h1>
+            <a href="{{ url_for('admin.dashboard') }}" class="text-indigo-600 hover:text-indigo-800">
+                <i class="fas fa-arrow-left mr-2"></i>Voltar ao Painel
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <form method="POST" class="space-y-6">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div>
+                <label for="nome_loja" class="block text-sm font-medium text-gray-700 mb-2">
+                    Nome da Loja <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="nome_loja" name="nome_loja" required
+                       value="{{ config.nome_loja if config else 'E-Shop' }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <p class="mt-1 text-sm text-gray-500">Este nome aparecerá no cabeçalho e rodapé do site</p>
+            </div>
+
+            <div>
+                <label for="descricao_loja" class="block text-sm font-medium text-gray-700 mb-2">
+                    Descrição da Loja <span class="text-red-500">*</span>
+                </label>
+                <textarea id="descricao_loja" name="descricao_loja" required rows="3"
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">{{ config.descricao_loja if config else 'Sua loja online de perfumes, roupas e acessórios.' }}</textarea>
+                <p class="mt-1 text-sm text-gray-500">Esta descrição aparecerá no rodapé do site</p>
+            </div>
+
+            <div>
+                <label for="email_contato" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email de Contato <span class="text-red-500">*</span>
+                </label>
+                <input type="email" id="email_contato" name="email_contato" required
+                       value="{{ config.email_contato if config else 'contato@eshop.com' }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <p class="mt-1 text-sm text-gray-500">Email que aparecerá na seção de contato</p>
+            </div>
+
+            <div>
+                <label for="telefone_contato" class="block text-sm font-medium text-gray-700 mb-2">
+                    Telefone de Contato <span class="text-red-500">*</span>
+                </label>
+                <input type="tel" id="telefone_contato" name="telefone_contato" required
+                       value="{{ config.telefone_contato if config else '(00) 0000-0000' }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <p class="mt-1 text-sm text-gray-500">Telefone que aparecerá na seção de contato</p>
+            </div>
+
+            <div>
+                <label for="endereco" class="block text-sm font-medium text-gray-700 mb-2">
+                    Endereço (Opcional)
+                </label>
+                <input type="text" id="endereco" name="endereco"
+                       value="{{ config.endereco if config and config.endereco else '' }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <p class="mt-1 text-sm text-gray-500">Endereço físico da loja (opcional)</p>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <strong>Nota:</strong> O crédito "Desenvolvido por João Layon" permanecerá fixo no rodapé e não pode ser alterado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="{{ url_for('admin.dashboard') }}" 
+                   class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    <i class="fas fa-save mr-2"></i>Salvar Configurações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

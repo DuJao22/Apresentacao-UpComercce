@@ -35,4 +35,18 @@ def create_app():
         cart_count = sum(item['quantity'] for item in cart.values())
         return {'cart_count': cart_count}
     
+    @app.context_processor
+    def inject_store_config():
+        from app.utils.db import query_db
+        config = query_db('SELECT * FROM configuracoes_loja WHERE id = 1', one=True)
+        if not config:
+            config = {
+                'nome_loja': 'E-Shop',
+                'descricao_loja': 'Sua loja online de perfumes, roupas e acessórios.',
+                'email_contato': 'contato@eshop.com',
+                'telefone_contato': '(00) 0000-0000',
+                'endereco': None
+            }
+        return {'store_config': config}
+    
     return app

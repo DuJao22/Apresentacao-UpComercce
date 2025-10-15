@@ -123,6 +123,18 @@ def init_database():
     ''')
     
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS configuracoes_loja (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome_loja TEXT NOT NULL DEFAULT 'E-Shop',
+            descricao_loja TEXT NOT NULL DEFAULT 'Sua loja online de perfumes, roupas e acessórios.',
+            email_contato TEXT NOT NULL DEFAULT 'contato@eshop.com',
+            telefone_contato TEXT NOT NULL DEFAULT '(00) 0000-0000',
+            endereco TEXT,
+            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    cursor.execute('''
         INSERT INTO usuarios (nome, cpf, data_nascimento, telefone, email, senha_hash, perfil)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (
@@ -141,6 +153,11 @@ def init_database():
             ('Perfumes', 'Fragrâncias importadas e nacionais', 'perfumes'),
             ('Roupas', 'Vestuário masculino e feminino', 'roupas'),
             ('Acessórios', 'Acessórios diversos para todos os estilos', 'acessorios')
+    ''')
+    
+    cursor.execute('''
+        INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato)
+        VALUES ('E-Shop', 'Sua loja online de perfumes, roupas e acessórios.', 'contato@eshop.com', '(00) 0000-0000')
     ''')
     
     conn.commit()
