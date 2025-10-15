@@ -81,9 +81,10 @@ ecommerce/
 - Gestão de produtos (criar, editar, ativar/desativar)
 - Gestão de pedidos (visualizar, atualizar status)
 - Sistema de faturamento com relatórios
+- **Comissão Configurável**: Admin pode definir percentual de comissão (0% a 100%) nas configurações
 - Exportação CSV
 - Logs de atividades administrativas
-- **Configurações da Loja**: Permite configurar nome, descrição, email, telefone e endereço
+- **Configurações da Loja**: Permite configurar nome, descrição, email, telefone, endereço e comissão
 - **Sistema de Notificações em Tempo Real**:
   - Badge de notificação com contagem de pedidos pendentes
   - Pop-ups visuais na tela para novos pedidos
@@ -102,7 +103,9 @@ ecommerce/
 ### ✅ Área do Cliente (Nova!)
 - **Dashboard Profissional**: Estatísticas de compras, pedidos recentes, acesso rápido
 - **Gerenciamento de Pedidos**: Visualização completa com filtros por status
-- **Detalhes do Pedido**: Timeline visual de rastreamento, informações completas
+- **Detalhes do Pedido**: Timeline visual de rastreamento adaptável ao tipo de entrega
+  - **Entrega em Casa**: Pedido → Aprovado → Enviado → Entregue
+  - **Retirada no Local**: Pedido → Aprovado → Pronto → Retirado
 - **Cancelamento de Pedidos**: Cliente pode cancelar pedidos pendentes (estoque é reajustado)
 - **Configurações da Conta**: Atualização de dados pessoais e foto de perfil
 - **Alteração de Senha**: Sistema seguro com validação
