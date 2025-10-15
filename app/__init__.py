@@ -47,7 +47,9 @@ def create_app():
                 'descricao_loja': 'Sua loja online de perfumes, roupas e acessórios.',
                 'email_contato': 'contato@eshop.com',
                 'telefone_contato': '(00) 0000-0000',
-                'endereco': None
+                'endereco': None,
+                'local_retirada': None,
+                'email_notificacao': None
             }
         return {'store_config': config}
     

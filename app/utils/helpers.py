@@ -3,11 +3,10 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from flask import current_app
 import secrets
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+from config import Config
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
 def save_image(file, folder, max_size=(800, 800)):
     if file and allowed_file(file.filename):
