@@ -91,6 +91,7 @@ def init_database():
             metodo_pagamento TEXT,
             endereco_entrega TEXT,
             observacoes TEXT,
+            tipo_entrega TEXT DEFAULT 'entrega',
             criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
@@ -130,6 +131,8 @@ def init_database():
             email_contato TEXT NOT NULL DEFAULT 'contato@eshop.com',
             telefone_contato TEXT NOT NULL DEFAULT '(00) 0000-0000',
             endereco TEXT,
+            local_retirada TEXT,
+            email_notificacao TEXT,
             atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
