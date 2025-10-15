@@ -6,7 +6,8 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-3xl font-bold text-gray-800 mb-8">Gerenciar Pedidos</h1>
     
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Tabela Desktop -->
+    <div class="hidden md:block bg-white rounded-lg shadow-lg overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
@@ -47,6 +48,37 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <!-- Cards Mobile -->
+    <div class="md:hidden space-y-4">
+        {% for pedido in pedidos %}
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">#{{ pedido.id }} - {{ pedido.cliente_nome }}</h3>
+                    <p class="text-sm text-gray-600">{{ pedido.cliente_email }}</p>
+                    <p class="text-xl font-bold text-indigo-600 mt-2">R$ {{ "%.2f"|format(pedido.total) }}</p>
+                </div>
+                <span class="px-2 py-1 rounded-full text-xs font-semibold
+                    {% if pedido.status == 'pendente' %}bg-yellow-100 text-yellow-800
+                    {% elif pedido.status == 'aprovado' %}bg-green-100 text-green-800
+                    {% elif pedido.status == 'enviado' %}bg-blue-100 text-blue-800
+                    {% elif pedido.status == 'entregue' %}bg-green-100 text-green-800
+                    {% else %}bg-red-100 text-red-800{% endif %}">
+                    {{ pedido.status|title }}
+                </span>
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+                <div class="text-sm text-gray-600">
+                    <span class="font-semibold">Itens:</span> {{ pedido.total_itens }}<br>
+                    <span class="font-semibold">Data:</span> {{ pedido.criado_em }}
+                </div>
+                <a href="{{ url_for('admin.pedido_detalhes', id=pedido.id) }}" 
+                   class="text-indigo-600 hover:underline text-sm font-semibold">Ver Detalhes</a>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

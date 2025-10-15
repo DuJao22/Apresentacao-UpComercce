@@ -20,7 +20,8 @@
         </form>
     </div>
     
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Tabela Desktop -->
+    <div class="hidden md:block bg-white rounded-lg shadow-lg overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
@@ -58,6 +59,37 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <!-- Cards Mobile -->
+    <div class="md:hidden space-y-4">
+        {% for categoria in categorias %}
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">{{ categoria.nome }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">{{ categoria.descricao }}</p>
+                </div>
+                <span class="px-2 py-1 rounded-full text-xs font-semibold
+                    {% if categoria.ativo %}bg-green-100 text-green-800
+                    {% else %}bg-red-100 text-red-800{% endif %}">
+                    {% if categoria.ativo %}Ativa{% else %}Inativa{% endif %}
+                </span>
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+                <div class="text-sm text-gray-600">
+                    <span class="font-semibold">ID:</span> {{ categoria.id }} | 
+                    <span class="font-semibold">Slug:</span> {{ categoria.slug }}
+                </div>
+                <form method="POST" action="{{ url_for('admin.toggle_categoria_status', id=categoria.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="text-indigo-600 hover:underline text-sm font-semibold">
+                        {% if categoria.ativo %}Desativar{% else %}Ativar{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
