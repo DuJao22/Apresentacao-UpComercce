@@ -54,6 +54,11 @@ def usuarios():
 @admin_required
 def resetar_senha(id):
     nova_senha = request.form.get('nova_senha')
+    
+    if not nova_senha or len(nova_senha) < 6:
+        flash('A nova senha deve ter pelo menos 6 caracteres.', 'danger')
+        return redirect(url_for('admin.usuarios'))
+    
     senha_hash = generate_password_hash(nova_senha)
     
     execute_db('UPDATE usuarios SET senha_hash = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?', 
@@ -87,6 +92,12 @@ def categorias():
     if request.method == 'POST':
         nome = request.form.get('nome')
         descricao = request.form.get('descricao')
+        
+        if not nome:
+            flash('Nome da categoria é obrigatório.', 'danger')
+            categorias = query_db('SELECT * FROM categorias ORDER BY nome')
+            return render_template('admin/categorias.html', categorias=categorias)
+        
         slug = nome.lower().replace(' ', '-').replace('ã', 'a').replace('õ', 'o').replace('ç', 'c')
         
         execute_db('INSERT INTO categorias (nome, descricao, slug) VALUES (?, ?, ?)', 
@@ -123,12 +134,54 @@ def produtos():
         categoria_id = request.form.get('categoria_id')
         nome = request.form.get('nome')
         descricao = request.form.get('descricao')
-        preco = float(request.form.get('preco'))
         sku = request.form.get('sku')
-        quantidade_estoque = int(request.form.get('quantidade_estoque'))
         peso = request.form.get('peso') or None
         dimensoes = request.form.get('dimensoes') or None
         marca = request.form.get('marca') or None
+        
+        if not nome or not sku or not categoria_id:
+            flash('Por favor, preencha todos os campos obrigatórios.', 'danger')
+            categorias = query_db('SELECT * FROM categorias WHERE ativo = 1 ORDER BY nome')
+            produtos = query_db('''
+                SELECT p.*, c.nome as categoria_nome,
+                       (SELECT caminho_imagem FROM produto_imagens WHERE produto_id = p.id ORDER BY ordem LIMIT 1) as imagem_principal
+                FROM produtos p
+                JOIN categorias c ON p.categoria_id = c.id
+                ORDER BY p.criado_em DESC
+            ''')
+            return render_template('admin/produtos.html', produtos=produtos, categorias=categorias)
+        
+        try:
+            preco = float(request.form.get('preco'))
+            if preco < 0:
+                raise ValueError("Preço não pode ser negativo")
+        except (ValueError, TypeError):
+            flash('Preço inválido. Insira um número válido.', 'danger')
+            categorias = query_db('SELECT * FROM categorias WHERE ativo = 1 ORDER BY nome')
+            produtos = query_db('''
+                SELECT p.*, c.nome as categoria_nome,
+                       (SELECT caminho_imagem FROM produto_imagens WHERE produto_id = p.id ORDER BY ordem LIMIT 1) as imagem_principal
+                FROM produtos p
+                JOIN categorias c ON p.categoria_id = c.id
+                ORDER BY p.criado_em DESC
+            ''')
+            return render_template('admin/produtos.html', produtos=produtos, categorias=categorias)
+        
+        try:
+            quantidade_estoque = int(request.form.get('quantidade_estoque'))
+            if quantidade_estoque < 0:
+                raise ValueError("Quantidade não pode ser negativa")
+        except (ValueError, TypeError):
+            flash('Quantidade em estoque inválida. Insira um número inteiro válido.', 'danger')
+            categorias = query_db('SELECT * FROM categorias WHERE ativo = 1 ORDER BY nome')
+            produtos = query_db('''
+                SELECT p.*, c.nome as categoria_nome,
+                       (SELECT caminho_imagem FROM produto_imagens WHERE produto_id = p.id ORDER BY ordem LIMIT 1) as imagem_principal
+                FROM produtos p
+                JOIN categorias c ON p.categoria_id = c.id
+                ORDER BY p.criado_em DESC
+            ''')
+            return render_template('admin/produtos.html', produtos=produtos, categorias=categorias)
         
         produto_id = execute_db('''
             INSERT INTO produtos (categoria_id, nome, descricao, preco, sku, quantidade_estoque, peso, dimensoes, marca)
@@ -178,11 +231,29 @@ def editar_produto(id):
         categoria_id = request.form.get('categoria_id')
         nome = request.form.get('nome')
         descricao = request.form.get('descricao')
-        preco = float(request.form.get('preco'))
-        quantidade_estoque = int(request.form.get('quantidade_estoque'))
         peso = request.form.get('peso') or None
         dimensoes = request.form.get('dimensoes') or None
         marca = request.form.get('marca') or None
+        
+        try:
+            preco = float(request.form.get('preco'))
+            if preco < 0:
+                raise ValueError("Preço não pode ser negativo")
+        except (ValueError, TypeError):
+            flash('Preço inválido. Insira um número válido.', 'danger')
+            categorias = query_db('SELECT * FROM categorias WHERE ativo = 1 ORDER BY nome')
+            imagens = query_db('SELECT * FROM produto_imagens WHERE produto_id = ? ORDER BY ordem', [id])
+            return render_template('admin/editar_produto.html', produto=produto, categorias=categorias, imagens=imagens)
+        
+        try:
+            quantidade_estoque = int(request.form.get('quantidade_estoque'))
+            if quantidade_estoque < 0:
+                raise ValueError("Quantidade não pode ser negativa")
+        except (ValueError, TypeError):
+            flash('Quantidade em estoque inválida. Insira um número inteiro válido.', 'danger')
+            categorias = query_db('SELECT * FROM categorias WHERE ativo = 1 ORDER BY nome')
+            imagens = query_db('SELECT * FROM produto_imagens WHERE produto_id = ? ORDER BY ordem', [id])
+            return render_template('admin/editar_produto.html', produto=produto, categorias=categorias, imagens=imagens)
         
         execute_db('''
             UPDATE produtos 

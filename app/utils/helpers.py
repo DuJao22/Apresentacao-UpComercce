@@ -9,7 +9,13 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
 def save_image(file, folder, max_size=(800, 800)):
-    if file and allowed_file(file.filename):
+    if not file or not file.filename:
+        return None
+        
+    if not allowed_file(file.filename):
+        return None
+        
+    try:
         filename = secure_filename(file.filename)
         random_hex = secrets.token_hex(8)
         _, f_ext = os.path.splitext(filename)
@@ -25,7 +31,9 @@ def save_image(file, folder, max_size=(800, 800)):
         img.save(file_path, quality=85, optimize=True)
         
         return os.path.join('uploads', folder, new_filename)
-    return None
+    except (IOError, OSError) as e:
+        print(f"Erro ao salvar imagem: {e}")
+        return None
 
 def format_currency(value):
     return f"R$ {value:,.2f}".replace(',', '_').replace('.', ',').replace('_', '.')

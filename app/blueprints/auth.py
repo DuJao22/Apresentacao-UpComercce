@@ -16,6 +16,10 @@ def login():
         email = request.form.get('email')
         senha = request.form.get('senha')
         
+        if not email or not senha:
+            flash('Por favor, preencha email e senha.', 'danger')
+            return render_template('auth/login.html')
+        
         user = query_db('SELECT * FROM usuarios WHERE email = ? AND ativo = 1', [email], one=True)
         
         if user and check_password_hash(user['senha_hash'], senha):
@@ -44,6 +48,14 @@ def register():
         telefone = request.form.get('telefone')
         email = request.form.get('email')
         senha = request.form.get('senha')
+        
+        if not all([nome, cpf, data_nascimento, telefone, email, senha]):
+            flash('Por favor, preencha todos os campos.', 'danger')
+            return render_template('auth/register.html')
+        
+        if len(senha) < 6:
+            flash('A senha deve ter pelo menos 6 caracteres.', 'danger')
+            return render_template('auth/register.html')
         
         if not validate_cpf(cpf):
             flash('CPF inválido.', 'danger')
@@ -118,7 +130,19 @@ def change_password():
         nova_senha = request.form.get('nova_senha')
         confirmar_senha = request.form.get('confirmar_senha')
         
+        if not all([senha_atual, nova_senha, confirmar_senha]):
+            flash('Por favor, preencha todos os campos.', 'danger')
+            return render_template('auth/change_password.html')
+        
+        if len(nova_senha) < 6:
+            flash('A nova senha deve ter pelo menos 6 caracteres.', 'danger')
+            return render_template('auth/change_password.html')
+        
         user = query_db('SELECT senha_hash FROM usuarios WHERE id = ?', [session['user_id']], one=True)
+        
+        if not user:
+            flash('Usuário não encontrado.', 'danger')
+            return redirect(url_for('auth.logout'))
         
         if not check_password_hash(user['senha_hash'], senha_atual):
             flash('Senha atual incorreta.', 'danger')

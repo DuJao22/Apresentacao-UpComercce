@@ -32,7 +32,20 @@ def index():
 @cart_bp.route('/adicionar', methods=['POST'])
 def adicionar():
     product_id = request.form.get('product_id')
-    quantity = int(request.form.get('quantity', 1))
+    
+    if not product_id:
+        flash('Produto inválido.', 'danger')
+        return redirect(url_for('shop.index'))
+    
+    try:
+        quantity = int(request.form.get('quantity', 1))
+    except (ValueError, TypeError):
+        flash('Quantidade inválida.', 'danger')
+        return redirect(url_for('shop.index'))
+    
+    if quantity < 1:
+        flash('Quantidade deve ser maior que zero.', 'danger')
+        return redirect(url_for('shop.index'))
     
     produto = query_db('SELECT * FROM produtos WHERE id = ? AND ativo = 1', [product_id], one=True)
     
@@ -61,7 +74,16 @@ def adicionar():
 @cart_bp.route('/atualizar', methods=['POST'])
 def atualizar():
     product_id = request.form.get('product_id')
-    quantity = int(request.form.get('quantity', 1))
+    
+    if not product_id:
+        flash('Produto inválido.', 'danger')
+        return redirect(url_for('cart.index'))
+    
+    try:
+        quantity = int(request.form.get('quantity', 1))
+    except (ValueError, TypeError):
+        flash('Quantidade inválida.', 'danger')
+        return redirect(url_for('cart.index'))
     
     cart = session.get('cart', {})
     
@@ -102,24 +124,43 @@ def checkout():
         metodo_pagamento = request.form.get('metodo_pagamento')
         observacoes = request.form.get('observacoes', '')
         
+        if not metodo_pagamento:
+            flash('Por favor, selecione um método de pagamento.', 'danger')
+            return redirect(url_for('cart.checkout'))
+        
         if tipo_entrega == 'entrega' and not endereco.strip():
             flash('Por favor, informe o endereço de entrega.', 'danger')
             return redirect(url_for('cart.checkout'))
         
         total = 0
+        produtos_validos = []
+        
         for product_id, item in cart.items():
-            produto = query_db('SELECT preco FROM produtos WHERE id = ?', [product_id], one=True)
+            produto = query_db('SELECT * FROM produtos WHERE id = ? AND ativo = 1', [product_id], one=True)
             if produto:
+                if produto['quantidade_estoque'] < item['quantity']:
+                    flash(f'Produto {produto["nome"]} sem estoque suficiente. Disponível: {produto["quantidade_estoque"]} unidades.', 'danger')
+                    return redirect(url_for('cart.index'))
                 total += produto['preco'] * item['quantity']
+                produtos_validos.append((product_id, item, produto))
+            else:
+                flash(f'Produto ID {product_id} não está mais disponível.', 'warning')
+                if product_id in cart:
+                    del cart[product_id]
+                    session['cart'] = cart
+                return redirect(url_for('cart.index'))
         
-        pedido_id = execute_db('''
-            INSERT INTO pedidos (usuario_id, total, status, metodo_pagamento, endereco_entrega, observacoes, tipo_entrega)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (session['user_id'], total, 'pendente', metodo_pagamento, endereco, observacoes, tipo_entrega))
+        if total <= 0:
+            flash('Erro ao calcular o total do pedido.', 'danger')
+            return redirect(url_for('cart.index'))
         
-        for product_id, item in cart.items():
-            produto = query_db('SELECT * FROM produtos WHERE id = ?', [product_id], one=True)
-            if produto:
+        try:
+            pedido_id = execute_db('''
+                INSERT INTO pedidos (usuario_id, total, status, metodo_pagamento, endereco_entrega, observacoes, tipo_entrega)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (session['user_id'], total, 'pendente', metodo_pagamento, endereco, observacoes, tipo_entrega))
+            
+            for product_id, item, produto in produtos_validos:
                 subtotal = produto['preco'] * item['quantity']
                 execute_db('''
                     INSERT INTO pedido_itens (pedido_id, produto_id, quantidade, preco_unitario, subtotal)
@@ -131,6 +172,9 @@ def checkout():
                     SET quantidade_estoque = quantidade_estoque - ?, atualizado_em = CURRENT_TIMESTAMP
                     WHERE id = ?
                 ''', (item['quantity'], product_id))
+        except Exception as e:
+            flash('Erro ao processar pedido. Tente novamente.', 'danger')
+            return redirect(url_for('cart.checkout'))
         
         session.pop('cart', None)
         flash('Pedido realizado com sucesso!', 'success')

@@ -31,6 +31,9 @@ def create_app():
     app.register_blueprint(cart_bp)
     app.register_blueprint(customer_bp)
     
+    from app.utils.db import close_db
+    app.teardown_appcontext(close_db)
+    
     @app.context_processor
     def inject_cart_count():
         cart = session.get('cart', {})
