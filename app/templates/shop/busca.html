@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Buscar Produtos{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Resultados da Busca</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <form method="GET" action="{{ url_for('shop.busca') }}">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="md:col-span-2">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Buscar produtos..."
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <select name="categoria"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Todas as Categorias</option>
+                        {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if categoria_id|string == cat.id|string %}selected{% endif %}>{{ cat.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                Buscar
+            </button>
+        </form>
+    </div>
+    
+    {% if produtos %}
+    <p class="text-gray-600 mb-6">{{ produtos|length }} produto(s) encontrado(s)</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for produto in produtos %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+            <a href="{{ url_for('shop.produto', id=produto.id) }}">
+                {% if produto.imagem_principal %}
+                <img src="{{ url_for('static', filename=produto.imagem_principal) }}" 
+                     class="w-full h-48 object-cover">
+                {% else %}
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <i class="fas fa-image text-gray-400 text-4xl"></i>
+                </div>
+                {% endif %}
+            </a>
+            <div class="p-4">
+                <p class="text-sm text-gray-600">{{ produto.categoria_nome }}</p>
+                <h3 class="text-lg font-bold text-gray-800 mb-2">{{ produto.nome }}</h3>
+                <p class="text-2xl font-bold text-indigo-600 mb-4">R$ {{ "%.2f"|format(produto.preco) }}</p>
+                <a href="{{ url_for('shop.produto', id=produto.id) }}" 
+                   class="block w-full bg-indigo-600 text-white text-center py-2 rounded-lg hover:bg-indigo-700">
+                    Ver Detalhes
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600 py-12">Nenhum produto encontrado.</p>
+    {% endif %}
+</div>
+{% endblock %}

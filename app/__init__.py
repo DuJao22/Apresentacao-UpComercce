@@ -1,5 +1,6 @@
 import os
 from flask import Flask, session
+from flask_wtf.csrf import CSRFProtect
 from datetime import timedelta
 
 def create_app():
@@ -10,6 +11,9 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
     app.config['DATABASE'] = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ecommerce.db')
+    app.config['WTF_CSRF_ENABLED'] = True
+    
+    csrf = CSRFProtect(app)
     
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'products'), exist_ok=True)

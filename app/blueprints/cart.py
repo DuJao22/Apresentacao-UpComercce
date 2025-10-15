@@ -40,11 +40,14 @@ def adicionar():
         flash('Produto não encontrado.', 'danger')
         return redirect(url_for('shop.index'))
     
-    if produto['quantidade_estoque'] < quantity:
-        flash('Quantidade indisponível em estoque.', 'danger')
-        return redirect(url_for('shop.produto', id=product_id))
-    
     cart = session.get('cart', {})
+    
+    quantidade_atual_carrinho = cart.get(product_id, {}).get('quantity', 0)
+    quantidade_total = quantidade_atual_carrinho + quantity
+    
+    if produto['quantidade_estoque'] < quantidade_total:
+        flash(f'Quantidade indisponível em estoque. Disponível: {produto["quantidade_estoque"]} unidades.', 'danger')
+        return redirect(url_for('shop.produto', id=product_id))
     
     if product_id in cart:
         cart[product_id]['quantity'] += quantity

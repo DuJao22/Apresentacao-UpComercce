@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-commerce{% endblock %} | João Layon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('shop.index') }}" class="text-2xl font-bold text-indigo-600">
+                        <i class="fas fa-shopping-bag mr-2"></i>E-Shop
+                    </a>
+                    <div class="hidden md:flex ml-10 space-x-8">
+                        <a href="{{ url_for('shop.index') }}" class="text-gray-700 hover:text-indigo-600 px-3 py-2">Início</a>
+                        <a href="{{ url_for('shop.categoria', slug='perfumes') }}" class="text-gray-700 hover:text-indigo-600 px-3 py-2">Perfumes</a>
+                        <a href="{{ url_for('shop.categoria', slug='roupas') }}" class="text-gray-700 hover:text-indigo-600 px-3 py-2">Roupas</a>
+                        <a href="{{ url_for('shop.categoria', slug='acessorios') }}" class="text-gray-700 hover:text-indigo-600 px-3 py-2">Acessórios</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <form action="{{ url_for('shop.busca') }}" method="GET" class="hidden md:flex">
+                        <input type="text" name="q" placeholder="Buscar produtos..." 
+                               class="px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    
+                    <a href="{{ url_for('cart.index') }}" class="relative text-gray-700 hover:text-indigo-600">
+                        <i class="fas fa-shopping-cart text-2xl"></i>
+                        {% if cart_count > 0 %}
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                            {{ cart_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    
+                    {% if session.user_id %}
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 text-gray-700 hover:text-indigo-600">
+                                {% if session.user_photo %}
+                                <img src="{{ url_for('static', filename=session.user_photo) }}" class="w-8 h-8 rounded-full object-cover">
+                                {% else %}
+                                <i class="fas fa-user-circle text-2xl"></i>
+                                {% endif %}
+                                <span class="hidden md:block">{{ session.user_name }}</span>
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </button>
+                            <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-10">
+                                <a href="{{ url_for('auth.profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Meu Perfil</a>
+                                {% if session.user_role == 'admin' %}
+                                <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Painel Admin</a>
+                                {% endif %}
+                                <a href="{{ url_for('auth.change_password') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Alterar Senha</a>
+                                <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Sair</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="text-gray-700 hover:text-indigo-600">
+                            <i class="fas fa-sign-in-alt mr-1"></i>Entrar
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            Cadastrar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} bg-{% if category == 'success' %}green{% elif category == 'danger' %}red{% elif category == 'warning' %}yellow{% else %}blue{% endif %}-100 border border-{% if category == 'success' %}green{% elif category == 'danger' %}red{% elif category == 'warning' %}yellow{% else %}blue{% endif %}-400 text-{% if category == 'success' %}green{% elif category == 'danger' %}red{% elif category == 'warning' %}yellow{% else %}blue{% endif %}-700 px-4 py-3 rounded relative mb-4">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">E-Shop</h3>
+                    <p class="text-gray-400">Sua loja online de perfumes, roupas e acessórios.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Links Rápidos</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{{ url_for('shop.index') }}" class="hover:text-white">Início</a></li>
+                        <li><a href="{{ url_for('shop.categoria', slug='perfumes') }}" class="hover:text-white">Perfumes</a></li>
+                        <li><a href="{{ url_for('shop.categoria', slug='roupas') }}" class="hover:text-white">Roupas</a></li>
+                        <li><a href="{{ url_for('shop.categoria', slug='acessorios') }}" class="hover:text-white">Acessórios</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contato</h3>
+                    <p class="text-gray-400">Email: contato@eshop.com</p>
+                    <p class="text-gray-400">Telefone: (00) 0000-0000</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 E-Shop. Desenvolvido por <strong>João Layon</strong>. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

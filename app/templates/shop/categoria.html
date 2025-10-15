@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ categoria.nome }}{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">{{ categoria.nome }}</h1>
+        <p class="text-gray-600">{{ categoria.descricao }}</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% if produtos %}
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for produto in produtos %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+            <a href="{{ url_for('shop.produto', id=produto.id) }}">
+                {% if produto.imagem_principal %}
+                <img src="{{ url_for('static', filename=produto.imagem_principal) }}" 
+                     class="w-full h-48 object-cover">
+                {% else %}
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <i class="fas fa-image text-gray-400 text-4xl"></i>
+                </div>
+                {% endif %}
+            </a>
+            <div class="p-4">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">{{ produto.nome }}</h3>
+                <p class="text-2xl font-bold text-indigo-600 mb-4">R$ {{ "%.2f"|format(produto.preco) }}</p>
+                <a href="{{ url_for('shop.produto', id=produto.id) }}" 
+                   class="block w-full bg-indigo-600 text-white text-center py-2 rounded-lg hover:bg-indigo-700">
+                    Ver Detalhes
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600 py-12">Nenhum produto encontrado nesta categoria.</p>
+    {% endif %}
+</div>
+{% endblock %}
