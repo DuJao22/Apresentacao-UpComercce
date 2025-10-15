@@ -446,6 +446,16 @@ def configuracoes():
         endereco = request.form.get('endereco')
         local_retirada = request.form.get('local_retirada')
         email_notificacao = request.form.get('email_notificacao')
+        comissao_percentual = request.form.get('comissao_percentual', '10.0')
+        
+        try:
+            comissao_percentual = float(comissao_percentual)
+            if comissao_percentual < 0 or comissao_percentual > 100:
+                flash('A comissão deve estar entre 0% e 100%.', 'danger')
+                return redirect(url_for('admin.configuracoes'))
+        except ValueError:
+            flash('Valor de comissão inválido.', 'danger')
+            return redirect(url_for('admin.configuracoes'))
         
         config_exists = query_db('SELECT id FROM configuracoes_loja WHERE id = 1', one=True)
         
@@ -454,14 +464,14 @@ def configuracoes():
                 UPDATE configuracoes_loja 
                 SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
                     telefone_contato = ?, endereco = ?, local_retirada = ?, 
-                    email_notificacao = ?, atualizado_em = CURRENT_TIMESTAMP
+                    email_notificacao = ?, comissao_percentual = ?, atualizado_em = CURRENT_TIMESTAMP
                 WHERE id = 1
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao))
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao, comissao_percentual))
         else:
             execute_db('''
-                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao))
+                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao, comissao_percentual)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao, comissao_percentual))
         
         execute_db('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
                    (session['user_id'], 'atualizar_configuracoes', 'Configurações da loja atualizadas'))
@@ -478,7 +488,8 @@ def configuracoes():
             'telefone_contato': '(00) 0000-0000',
             'endereco': '',
             'local_retirada': '',
-            'email_notificacao': ''
+            'email_notificacao': '',
+            'comissao_percentual': 10.0
         }
     return render_template('admin/configuracoes.html', config=config)
 
