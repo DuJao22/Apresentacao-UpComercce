@@ -29,37 +29,37 @@
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex flex-col items-center text-center flex-1">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 
-                                {% if pedido.status in ['pendente', 'aprovado', 'enviado', 'entregue'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
+                                {% if pedido.status in ['pendente', 'confirmado', 'em_separacao', 'pronto_para_retirada', 'saiu_para_entrega', 'entregue', 'retirado'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <p class="text-sm font-medium text-gray-700">Pedido Realizado</p>
+                            <p class="text-sm font-medium text-gray-700">Pedido<br>Realizado</p>
                         </div>
                         
-                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['aprovado', 'enviado', 'entregue'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['confirmado', 'em_separacao', 'pronto_para_retirada', 'saiu_para_entrega', 'entregue', 'retirado'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
                         
                         <div class="flex flex-col items-center text-center flex-1">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 
-                                {% if pedido.status in ['aprovado', 'enviado', 'entregue'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
+                                {% if pedido.status in ['confirmado', 'em_separacao', 'pronto_para_retirada', 'saiu_para_entrega', 'entregue', 'retirado'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
                                 <i class="fas fa-check-double"></i>
                             </div>
                             <p class="text-sm font-medium text-gray-700">Aprovado</p>
                         </div>
                         
-                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['enviado', 'entregue'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['em_separacao', 'pronto_para_retirada', 'saiu_para_entrega', 'entregue', 'retirado'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
                         
                         <div class="flex flex-col items-center text-center flex-1">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 
-                                {% if pedido.status in ['enviado', 'entregue'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
+                                {% if pedido.status in ['em_separacao', 'pronto_para_retirada', 'saiu_para_entrega', 'entregue', 'retirado'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
                                 <i class="fas fa-shipping-fast"></i>
                             </div>
                             <p class="text-sm font-medium text-gray-700">Enviado</p>
                         </div>
                         
-                        <div class="flex-1 h-1 mx-2 {% if pedido.status == 'entregue' %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
+                        <div class="flex-1 h-1 mx-2 {% if pedido.status in ['entregue', 'retirado'] %}bg-green-500{% else %}bg-gray-300{% endif %}"></div>
                         
                         <div class="flex flex-col items-center text-center flex-1">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 
-                                {% if pedido.status == 'entregue' %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
+                                {% if pedido.status in ['entregue', 'retirado'] %}bg-green-500 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
                                 <i class="fas fa-home"></i>
                             </div>
                             <p class="text-sm font-medium text-gray-700">Entregue</p>
@@ -71,11 +71,21 @@
                     <p class="text-sm text-gray-600">Status Atual:</p>
                     <p class="text-lg font-bold 
                         {% if pedido.status == 'pendente' %}text-yellow-600
-                        {% elif pedido.status == 'aprovado' %}text-green-600
-                        {% elif pedido.status == 'enviado' %}text-blue-600
-                        {% elif pedido.status == 'entregue' %}text-green-600
-                        {% else %}text-red-600{% endif %}">
-                        {{ pedido.status|title }}
+                        {% elif pedido.status == 'confirmado' %}text-green-600
+                        {% elif pedido.status == 'em_separacao' %}text-blue-600
+                        {% elif pedido.status in ['pronto_para_retirada', 'saiu_para_entrega'] %}text-indigo-600
+                        {% elif pedido.status in ['entregue', 'retirado'] %}text-green-700
+                        {% elif pedido.status == 'cancelado' %}text-red-600
+                        {% else %}text-gray-600{% endif %}">
+                        {% if pedido.status == 'pendente' %}Pendente
+                        {% elif pedido.status == 'confirmado' %}Confirmado
+                        {% elif pedido.status == 'em_separacao' %}Em Separação
+                        {% elif pedido.status == 'pronto_para_retirada' %}Pronto para Retirada
+                        {% elif pedido.status == 'saiu_para_entrega' %}Saiu para Entrega
+                        {% elif pedido.status == 'entregue' %}Entregue
+                        {% elif pedido.status == 'retirado' %}Retirado
+                        {% elif pedido.status == 'cancelado' %}Cancelado
+                        {% else %}{{ pedido.status|title }}{% endif %}
                     </p>
                 </div>
             </div>
