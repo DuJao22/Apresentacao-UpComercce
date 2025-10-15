@@ -132,15 +132,41 @@ ecommerce/
 python init_db.py
 ```
 
-### 2. Executar a Aplicação
+### 2. Executar a Migração (se banco já existir)
+```bash
+python migrate_database.py
+```
+
+### 3. Executar a Aplicação
 ```bash
 python main.py
 ```
 
-### 3. Acessar
+### 4. Acessar
 - URL: `http://localhost:5000`
 - Painel Admin: Login com credenciais de admin
 - Área do Cliente: Login com credenciais de cliente (após login, acesso via menu do usuário)
+
+## 📦 Como Testar o Sistema de Retirada/Entrega
+
+### Passo 1: Configure o Local de Retirada (Admin)
+1. Faça login como admin (`admin@ecommerce.com` / `admin123`)
+2. Vá em **Painel Admin** > **Configurações**
+3. Preencha o campo **Local de Retirada** com endereço e horários
+4. Salve as configurações
+
+### Passo 2: Teste o Checkout (Cliente)
+1. Faça login como cliente (ou crie uma conta)
+2. Adicione produtos ao carrinho
+3. Clique em **Finalizar Compra**
+4. **Escolha o tipo de entrega**:
+   - 🚚 **Entrega em Casa**: Preencha o endereço
+   - 🏪 **Retirar no Local**: Veja o endereço de retirada
+5. Complete o pedido
+
+### Credenciais de Teste
+- **Admin**: `admin@ecommerce.com` / `admin123`
+- **Cliente**: `cliente@teste.com` / `senha123`
 
 ## Banco de Dados
 
