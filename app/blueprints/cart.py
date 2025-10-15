@@ -102,6 +102,10 @@ def checkout():
         metodo_pagamento = request.form.get('metodo_pagamento')
         observacoes = request.form.get('observacoes', '')
         
+        if tipo_entrega == 'entrega' and not endereco.strip():
+            flash('Por favor, informe o endereço de entrega.', 'danger')
+            return redirect(url_for('cart.checkout'))
+        
         total = 0
         for product_id, item in cart.items():
             produto = query_db('SELECT preco FROM produtos WHERE id = ?', [product_id], one=True)

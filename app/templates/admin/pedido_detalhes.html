@@ -30,7 +30,22 @@
             
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Informações de Entrega</h3>
-                <p class="text-gray-700 whitespace-pre-line">{{ pedido.endereco_entrega }}</p>
+                
+                <div class="mb-4 p-3 rounded-lg {% if pedido.tipo_entrega == 'retirada' %}bg-indigo-50 border border-indigo-200{% else %}bg-gray-50{% endif %}">
+                    <p class="font-semibold text-gray-800 mb-2">
+                        {% if pedido.tipo_entrega == 'retirada' %}
+                        <i class="fas fa-store text-indigo-600 mr-2"></i>Retirada no Local
+                        {% else %}
+                        <i class="fas fa-truck text-gray-600 mr-2"></i>Entrega em Casa
+                        {% endif %}
+                    </p>
+                    {% if pedido.tipo_entrega == 'retirada' %}
+                    <p class="text-sm text-indigo-800">O cliente irá retirar o pedido no local configurado.</p>
+                    {% else %}
+                    <p class="text-gray-700 whitespace-pre-line mt-2">{{ pedido.endereco_entrega }}</p>
+                    {% endif %}
+                </div>
+                
                 {% if pedido.observacoes %}
                 <div class="mt-4">
                     <p class="font-semibold text-gray-800">Observações:</p>

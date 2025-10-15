@@ -16,7 +16,7 @@
                 <div class="space-y-3">
                     <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
                         <input type="radio" name="tipo_entrega" value="entrega" checked
-                               onchange="document.getElementById('endereco-entrega-section').style.display='block'; document.getElementById('retirada-info').style.display='none';"
+                               onchange="document.getElementById('endereco-entrega-section').style.display='block'; document.getElementById('retirada-info').style.display='none'; document.getElementById('endereco_entrega').required=true;"
                                class="mt-1 mr-3 text-indigo-600 focus:ring-indigo-500">
                         <div class="flex-1">
                             <p class="font-semibold text-gray-800">
@@ -28,7 +28,7 @@
                     
                     <label class="flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
                         <input type="radio" name="tipo_entrega" value="retirada"
-                               onchange="document.getElementById('endereco-entrega-section').style.display='none'; document.getElementById('retirada-info').style.display='block';"
+                               onchange="document.getElementById('endereco-entrega-section').style.display='none'; document.getElementById('retirada-info').style.display='block'; document.getElementById('endereco_entrega').required=false;"
                                class="mt-1 mr-3 text-indigo-600 focus:ring-indigo-500">
                         <div class="flex-1">
                             <p class="font-semibold text-gray-800">
@@ -49,7 +49,7 @@
             
             <div id="endereco-entrega-section" class="bg-white rounded-lg shadow-lg p-6 mb-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Endereço de Entrega</h3>
-                <textarea name="endereco" id="endereco_entrega" rows="4" placeholder="Rua, número, bairro, cidade, estado, CEP..."
+                <textarea name="endereco" id="endereco_entrega" rows="4" required placeholder="Rua, número, bairro, cidade, estado, CEP..."
                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
             </div>
             {% else %}
