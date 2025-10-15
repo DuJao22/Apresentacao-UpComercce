@@ -193,6 +193,31 @@ O administrador pode personalizar as informações da loja através do painel ad
 
 ⚠️ **Nota**: O crédito "Desenvolvido por João Layon" é fixo e não pode ser alterado.
 
+## Manutenção e Migração do Banco de Dados
+
+### Executar Migração (para bancos existentes)
+Se você já tem um banco de dados existente e precisa adicionar as novas colunas:
+```bash
+python migrate_database.py
+```
+
+Este script adiciona as colunas necessárias:
+- `local_retirada` e `email_notificacao` em `configuracoes_loja`
+- `tipo_entrega` em `pedidos`
+
+### Criar Novo Banco de Dados
+Para criar um novo banco de dados do zero com todas as tabelas e configurações:
+```bash
+python init_db.py
+```
+
+⚠️ **Atenção**: Este comando apaga o banco existente e cria um novo!
+
+## Favicon e Interface
+
+✅ **Favicon Personalizado**: Todas as páginas exibem o favicon SVG da loja (ícone de sacola de compras em roxo/indigo)
+✅ **Interface Responsiva**: Design otimizado para desktop e mobile com Tailwind CSS
+
 ## Créditos
 Sistema desenvolvido por **João Layon** com Flask, SQLite3 e Tailwind CSS.
 
