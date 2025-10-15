@@ -45,6 +45,16 @@ def migrate_database():
         else:
             print(f"❌ Erro ao adicionar 'tipo_entrega': {e}")
     
+    # Adicionar coluna comissao_percentual na tabela configuracoes_loja
+    try:
+        cursor.execute("ALTER TABLE configuracoes_loja ADD COLUMN comissao_percentual REAL DEFAULT 10.0")
+        print("✓ Coluna 'comissao_percentual' adicionada à tabela configuracoes_loja")
+    except sqlite3.OperationalError as e:
+        if "duplicate column name" in str(e):
+            print("• Coluna 'comissao_percentual' já existe")
+        else:
+            print(f"❌ Erro ao adicionar 'comissao_percentual': {e}")
+    
     conn.commit()
     conn.close()
     

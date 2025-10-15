@@ -133,6 +133,7 @@ def init_database():
             endereco TEXT,
             local_retirada TEXT,
             email_notificacao TEXT,
+            comissao_percentual REAL DEFAULT 10.0,
             atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
