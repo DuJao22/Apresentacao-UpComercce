@@ -360,7 +360,7 @@ def faturamento():
     ''', [data_inicio], one=True)['total']
     
     config = query_db('SELECT comissao_percentual FROM configuracoes_loja WHERE id = 1', one=True)
-    comissao_percentual = float(config['comissao_percentual']) if config and config.get('comissao_percentual') else 10.0
+    comissao_percentual = float(config['comissao_percentual']) if config and config['comissao_percentual'] else 10.0
     comissao_valor = total_vendido * (comissao_percentual / 100)
     lucro_liquido = total_vendido - comissao_valor
     
