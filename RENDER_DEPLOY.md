@@ -38,8 +38,13 @@ git push
 
 - Verifica se o banco de dados existe
 - Se não existir, cria as tabelas e dados iniciais
-- Adiciona **19 produtos de amostra** automaticamente
+- Adiciona **17 produtos de amostra** automaticamente **com fotos profissionais**
 - Inicia o servidor Gunicorn
+
+### 📦 Produtos incluídos:
+- **4 Perfumes** com fotos (Essência Floral, Amadeirado Intenso, Lavanda, Oriental)
+- **5 Roupas** com fotos (Camiseta, Calça Jeans, Vestido, Camisa, Jaqueta)
+- **8 Acessórios** com fotos (Colar, Pulseira, Óculos, Relógio, Bolsa, Cinto, Carteira)
 
 ## 👤 Usuário Administrador Padrão
 
