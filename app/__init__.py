@@ -38,6 +38,19 @@ def create_app():
     from app.utils.db import close_db
     app.teardown_appcontext(close_db)
     
+    # Filtro personalizado para lidar com URLs externas de imagens
+    @app.template_filter('image_url')
+    def image_url_filter(caminho_imagem):
+        """Retorna URL completa para imagem (externa ou local)"""
+        if not caminho_imagem:
+            return ''
+        # Se for URL externa (começa com http), retorna diretamente
+        if caminho_imagem.startswith('http://') or caminho_imagem.startswith('https://'):
+            return caminho_imagem
+        # Se for caminho local, usa url_for
+        from flask import url_for
+        return url_for('static', filename=caminho_imagem)
+    
     @app.context_processor
     def inject_cart_count():
         cart = session.get('cart', {})

@@ -13,7 +13,7 @@
                 {% for item in cart_items %}
                 <div class="flex items-center border-b border-gray-200 p-6">
                     {% if item.produto.imagem_principal %}
-                    <img src="{{ url_for('static', filename=item.produto.imagem_principal) }}" 
+                    <img src="{{ item.produto.imagem_principal|image_url }}" 
                          class="w-24 h-24 object-cover rounded">
                     {% else %}
                     <div class="w-24 h-24 bg-gray-200 flex items-center justify-center rounded">
