@@ -535,6 +535,47 @@ def configuracoes():
         }
     return render_template('admin/configuracoes.html', config=config)
 
+@admin_bp.route('/resetar-produtos-categorias', methods=['POST'])
+@admin_required
+def resetar_produtos_categorias():
+    db = get_db()
+    try:
+        produtos_em_pedidos = query_db('''
+            SELECT DISTINCT produto_id 
+            FROM pedido_itens
+        ''')
+        produtos_em_pedidos_ids = [p['produto_id'] for p in produtos_em_pedidos] if produtos_em_pedidos else []
+        
+        if produtos_em_pedidos_ids:
+            placeholders = ','.join(['?' for _ in produtos_em_pedidos_ids])
+            db.execute(f'UPDATE produtos SET ativo = 0 WHERE id IN ({placeholders})', produtos_em_pedidos_ids)
+            
+            db.execute(f'DELETE FROM produto_imagens WHERE produto_id NOT IN ({placeholders})', produtos_em_pedidos_ids)
+            db.execute(f'DELETE FROM produto_atributos WHERE produto_id NOT IN ({placeholders})', produtos_em_pedidos_ids)
+            db.execute(f'DELETE FROM produtos WHERE id NOT IN ({placeholders})', produtos_em_pedidos_ids)
+        else:
+            db.execute('DELETE FROM produto_imagens')
+            db.execute('DELETE FROM produto_atributos')
+            db.execute('DELETE FROM produtos')
+        
+        db.execute('UPDATE categorias SET ativo = 0')
+        
+        db.execute('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
+                   (session['user_id'], 'resetar_database', 'Produtos e categorias foram desativados/removidos do banco de dados'))
+        
+        db.commit()
+        
+        produtos_preservados = len(produtos_em_pedidos_ids) if produtos_em_pedidos_ids else 0
+        if produtos_preservados > 0:
+            flash(f'Reset concluído! {produtos_preservados} produto(s) usado(s) em pedidos foram desativados (preservando histórico). Demais produtos e todas as categorias foram desativados.', 'success')
+        else:
+            flash('Reset concluído! Todos os produtos e categorias foram removidos. Não havia produtos em pedidos anteriores.', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Erro ao resetar banco de dados: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin.configuracoes'))
+
 @admin_bp.route('/check-new-orders')
 @admin_required
 def check_new_orders():
