@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ store_config.nome_loja }}{% endblock %}</title>
+    {% if store_config.logo_path %}
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename=store_config.logo_path) }}">
+    {% else %}
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <link rel="alternate icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {% endif %}
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -14,8 +18,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="{{ url_for('shop.index') }}" class="text-2xl font-bold text-indigo-600">
-                        <i class="fas fa-shopping-bag mr-2"></i>{{ store_config.nome_loja }}
+                    <a href="{{ url_for('shop.index') }}" class="flex items-center text-2xl font-bold text-indigo-600">
+                        {% if store_config.logo_path %}
+                        <img src="{{ url_for('static', filename=store_config.logo_path) }}" alt="{{ store_config.nome_loja }}" class="h-12 w-auto mr-3 object-contain">
+                        {% else %}
+                        <i class="fas fa-shopping-bag mr-2"></i>
+                        {% endif %}
+                        {{ store_config.nome_loja }}
                     </a>
                     <div class="hidden md:flex ml-10 space-x-8">
                         <a href="{{ url_for('shop.index') }}" class="text-gray-700 hover:text-indigo-600 px-3 py-2">Início</a>
@@ -103,7 +112,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 class="text-xl font-bold mb-4">{{ store_config.nome_loja }}</h3>
+                    <div class="flex items-center mb-4">
+                        {% if store_config.logo_path %}
+                        <img src="{{ url_for('static', filename=store_config.logo_path) }}" alt="{{ store_config.nome_loja }}" class="h-10 w-auto mr-3 object-contain">
+                        {% endif %}
+                        <h3 class="text-xl font-bold">{{ store_config.nome_loja }}</h3>
+                    </div>
                     <p class="text-gray-400">{{ store_config.descricao_loja }}</p>
                 </div>
                 <div>
@@ -131,6 +145,9 @@
     </footer>
     
     {% if session.user_role == 'admin' %}
+    <script>
+        window.STORE_LOGO_PATH = "{{ url_for('static', filename=store_config.logo_path) if store_config.logo_path else url_for('static', filename='favicon.svg') }}";
+    </script>
     <script src="{{ url_for('static', filename='js/admin-notifications.js') }}"></script>
     {% endif %}
 </body>

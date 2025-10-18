@@ -16,10 +16,11 @@ function requestNotificationPermission() {
 // Mostrar notificação do navegador
 function showBrowserNotification(title, body) {
     if ('Notification' in window && Notification.permission === 'granted') {
+        const logoPath = window.STORE_LOGO_PATH || '/static/favicon.svg';
         const notification = new Notification(title, {
             body: body,
-            icon: '/static/favicon.svg',
-            badge: '/static/favicon.svg',
+            icon: logoPath,
+            badge: logoPath,
             tag: 'novo-pedido',
             requireInteraction: true,
             vibrate: [200, 100, 200]

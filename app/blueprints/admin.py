@@ -489,28 +489,53 @@ def configuracoes():
             flash('Valor de comissão inválido.', 'danger')
             return redirect(url_for('admin.configuracoes'))
         
-        config_exists = query_db('SELECT id FROM configuracoes_loja WHERE id = 1', one=True)
+        logo_path = None
+        if 'logo' in request.files:
+            logo_file = request.files['logo']
+            if logo_file and logo_file.filename:
+                logo_path = save_image(logo_file, 'logos', max_size=(500, 500))
+                if not logo_path:
+                    flash('Erro ao fazer upload da logo. Verifique o formato do arquivo.', 'danger')
+                    return redirect(url_for('admin.configuracoes'))
+        
+        config_exists = query_db('SELECT id, logo_path FROM configuracoes_loja WHERE id = 1', one=True)
         
         if config_exists:
-            execute_db('''
-                UPDATE configuracoes_loja 
-                SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
-                    telefone_contato = ?, endereco = ?, local_retirada = ?, 
-                    email_notificacao = ?, comissao_percentual = ?, 
-                    mercadopago_access_token = ?, mercadopago_public_key = ?,
-                    mercadopago_webhook_secret = ?,
-                    atualizado_em = CURRENT_TIMESTAMP
-                WHERE id = 1
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, 
-                  email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret))
+            if logo_path:
+                execute_db('''
+                    UPDATE configuracoes_loja 
+                    SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
+                        telefone_contato = ?, endereco = ?, local_retirada = ?, 
+                        email_notificacao = ?, comissao_percentual = ?, 
+                        mercadopago_access_token = ?, mercadopago_public_key = ?,
+                        mercadopago_webhook_secret = ?, logo_path = ?,
+                        atualizado_em = CURRENT_TIMESTAMP
+                    WHERE id = 1
+                ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, 
+                      email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, 
+                      mercadopago_webhook_secret, logo_path))
+            else:
+                execute_db('''
+                    UPDATE configuracoes_loja 
+                    SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
+                        telefone_contato = ?, endereco = ?, local_retirada = ?, 
+                        email_notificacao = ?, comissao_percentual = ?, 
+                        mercadopago_access_token = ?, mercadopago_public_key = ?,
+                        mercadopago_webhook_secret = ?,
+                        atualizado_em = CURRENT_TIMESTAMP
+                    WHERE id = 1
+                ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, 
+                      email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret))
         else:
             execute_db('''
                 INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, 
                                                 endereco, local_retirada, email_notificacao, comissao_percentual,
-                                                mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                                mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret,
+                                                logo_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, 
-                  email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret))
+                  email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, 
+                  mercadopago_webhook_secret, logo_path))
         
         execute_db('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
                    (session['user_id'], 'atualizar_configuracoes', 'Configurações da loja atualizadas'))
