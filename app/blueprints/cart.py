@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from app.utils.db import query_db, execute_db
 from app.utils.decorators import login_required
+from app.utils import mercadopago_service
+import os
 
 cart_bp = Blueprint('cart', __name__, url_prefix='/carrinho')
 
@@ -172,6 +174,54 @@ def checkout():
                     SET quantidade_estoque = quantidade_estoque - ?, atualizado_em = CURRENT_TIMESTAMP
                     WHERE id = ?
                 ''', (item['quantity'], product_id))
+            
+            if metodo_pagamento == 'mercadopago' and mercadopago_service.is_mercadopago_configured():
+                usuario = query_db('SELECT nome, email FROM usuarios WHERE id = ?', [session['user_id']], one=True)
+                
+                items = []
+                for product_id, item, produto in produtos_validos:
+                    items.append({
+                        "title": produto['nome'],
+                        "quantity": item['quantity'],
+                        "unit_price": float(produto['preco']),
+                        "currency_id": "BRL"
+                    })
+                
+                domain = os.environ.get('REPLIT_DEV_DOMAIN', 'localhost:5000')
+                base_url = f"https://{domain}" if domain != 'localhost:5000' else 'http://localhost:5000'
+                
+                back_urls = {
+                    "success": f"{base_url}/carrinho/pagamento/sucesso?pedido_id={pedido_id}",
+                    "failure": f"{base_url}/carrinho/pagamento/falha?pedido_id={pedido_id}",
+                    "pending": f"{base_url}/carrinho/pagamento/pendente?pedido_id={pedido_id}"
+                }
+                
+                notification_url = f"{base_url}/webhook/mercadopago"
+                
+                preference = mercadopago_service.create_payment_preference(
+                    pedido_id=pedido_id,
+                    items=items,
+                    payer_info={
+                        "name": usuario['nome'],
+                        "email": usuario['email']
+                    },
+                    notification_url=notification_url,
+                    back_urls=back_urls
+                )
+                
+                if preference:
+                    execute_db('''
+                        UPDATE pedidos 
+                        SET mercadopago_preference_id = ?
+                        WHERE id = ?
+                    ''', (preference['preference_id'], pedido_id))
+                    
+                    session.pop('cart', None)
+                    return redirect(preference['init_point'])
+                else:
+                    flash('Erro ao inicializar pagamento com Mercado Pago. Tente novamente.', 'danger')
+                    return redirect(url_for('cart.checkout'))
+                    
         except Exception as e:
             flash('Erro ao processar pedido. Tente novamente.', 'danger')
             return redirect(url_for('cart.checkout'))
@@ -194,7 +244,65 @@ def checkout():
             })
             total += subtotal
     
-    config = query_db('SELECT local_retirada FROM configuracoes_loja WHERE id = 1', one=True)
+    config = query_db('SELECT local_retirada, mercadopago_access_token FROM configuracoes_loja WHERE id = 1', one=True)
     local_retirada = config['local_retirada'] if config and config['local_retirada'] else None
+    mercadopago_configurado = mercadopago_service.is_mercadopago_configured()
     
-    return render_template('shop/checkout.html', cart_items=cart_items, total=total, local_retirada=local_retirada)
+    return render_template('shop/checkout.html', cart_items=cart_items, total=total, 
+                         local_retirada=local_retirada, mercadopago_configurado=mercadopago_configurado)
+
+@cart_bp.route('/pagamento/sucesso')
+@login_required
+def pagamento_sucesso():
+    pedido_id = request.args.get('pedido_id')
+    payment_id = request.args.get('payment_id')
+    
+    if pedido_id:
+        pedido = query_db('SELECT * FROM pedidos WHERE id = ? AND usuario_id = ?', 
+                         [pedido_id, session['user_id']], one=True)
+        
+        if pedido:
+            if payment_id:
+                execute_db('''
+                    UPDATE pedidos 
+                    SET mercadopago_payment_id = ?, status = 'pago', atualizado_em = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                ''', (payment_id, pedido_id))
+            
+            flash('Pagamento realizado com sucesso! Obrigado pela sua compra.', 'success')
+        else:
+            flash('Pedido não encontrado.', 'warning')
+    
+    return redirect(url_for('customer.pedidos'))
+
+@cart_bp.route('/pagamento/falha')
+@login_required
+def pagamento_falha():
+    pedido_id = request.args.get('pedido_id')
+    
+    if pedido_id:
+        pedido = query_db('SELECT * FROM pedidos WHERE id = ? AND usuario_id = ?', 
+                         [pedido_id, session['user_id']], one=True)
+        
+        if pedido:
+            flash('Pagamento não foi aprovado. Por favor, tente novamente ou escolha outro método de pagamento.', 'danger')
+        else:
+            flash('Pedido não encontrado.', 'warning')
+    
+    return redirect(url_for('customer.pedidos'))
+
+@cart_bp.route('/pagamento/pendente')
+@login_required
+def pagamento_pendente():
+    pedido_id = request.args.get('pedido_id')
+    
+    if pedido_id:
+        pedido = query_db('SELECT * FROM pedidos WHERE id = ? AND usuario_id = ?', 
+                         [pedido_id, session['user_id']], one=True)
+        
+        if pedido:
+            flash('Seu pagamento está sendo processado. Você será notificado quando for aprovado.', 'info')
+        else:
+            flash('Pedido não encontrado.', 'warning')
+    
+    return redirect(url_for('customer.pedidos'))

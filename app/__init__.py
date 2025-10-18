@@ -24,12 +24,16 @@ def create_app():
     from app.blueprints.admin import admin_bp
     from app.blueprints.cart import cart_bp
     from app.blueprints.customer import customer_bp
+    from app.blueprints.webhook import webhook_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(shop_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(cart_bp)
     app.register_blueprint(customer_bp)
+    app.register_blueprint(webhook_bp)
+    
+    csrf.exempt(webhook_bp)
     
     from app.utils.db import close_db
     app.teardown_appcontext(close_db)

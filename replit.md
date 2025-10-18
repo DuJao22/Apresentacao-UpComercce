@@ -12,6 +12,7 @@ Sistema completo de e-commerce desenvolvido em Python Flask para venda de perfum
 - **Frontend**: HTML5 + Tailwind CSS + Font Awesome
 - **Segurança**: Werkzeug (hashing), Flask-WTF (CSRF)
 - **Processamento de Imagens**: Pillow
+- **Pagamentos**: Mercado Pago SDK (Python)
 
 ## Estrutura do Projeto
 
@@ -66,8 +67,10 @@ ecommerce/
 - Carrinho persistente na sessão
 - Atualização de quantidades
 - Checkout com endereço de entrega
-- Métodos de pagamento simulados
+- **Integração com Mercado Pago**: Pagamentos online com cartão, PIX, boleto
+- **Pagamento em Dinheiro**: Com confirmação manual pelo admin
 - Geração automática de pedidos
+- Webhooks para confirmação automática de pagamentos
 
 ### ✅ Controle de Estoque
 - Atualização automática ao confirmar pedidos
@@ -85,6 +88,8 @@ ecommerce/
 - Exportação CSV
 - Logs de atividades administrativas
 - **Configurações da Loja**: Permite configurar nome, descrição, email, telefone, endereço e comissão
+- **Configuração Mercado Pago**: Interface para adicionar credenciais (Access Token e Public Key)
+- **Confirmação de Pagamentos em Dinheiro**: Botão para admin confirmar recebimento de pagamentos em dinheiro
 - **Sistema de Notificações em Tempo Real**:
   - Badge de notificação com contagem de pedidos pendentes
   - Pop-ups visuais na tela para novos pedidos
@@ -179,10 +184,10 @@ python main.py
 - `produtos` - Produtos do catálogo
 - `produto_imagens` - Imagens dos produtos (até 5 por produto)
 - `produto_atributos` - Variações de produtos (cor, tamanho, etc.)
-- `pedidos` - Pedidos realizados
+- `pedidos` - Pedidos realizados (com campos Mercado Pago: mercadopago_payment_id, mercadopago_preference_id, confirmado_admin)
 - `pedido_itens` - Itens de cada pedido
 - `logs_admin` - Logs de atividades administrativas
-- `configuracoes_loja` - Configurações personalizáveis da loja (nome, contatos, etc.)
+- `configuracoes_loja` - Configurações personalizáveis da loja (nome, contatos, credenciais Mercado Pago, etc.)
 
 ## Segurança Implementada
 - ✅ Hashing de senhas com Werkzeug
@@ -195,11 +200,44 @@ python main.py
 ## Variáveis de Ambiente
 - `SESSION_SECRET` - Chave secreta para sessões (já configurada)
 
+## ✅ Sistema de Pagamentos (Novo!)
+
+### Mercado Pago
+O sistema está integrado com o Mercado Pago para processar pagamentos online:
+
+#### Como Configurar
+1. Faça login como admin (`admin@ecommerce.com` / `admin123`)
+2. Vá em **Painel Admin** > **Configurações**
+3. Role até a seção **Configuração Mercado Pago**
+4. Obtenha suas credenciais em [Mercado Pago Developers](https://www.mercadopago.com/developers/panel)
+5. Insira o **Access Token** e **Public Key**
+6. **IMPORTANTE**: Configure também o **Webhook Secret** para segurança:
+   - No painel do Mercado Pago, vá em **Webhooks** > **Configurar Notificações**
+   - Adicione a URL do webhook: `https://seu-dominio.com/webhook/mercadopago`
+   - Copie o Secret gerado automaticamente
+   - Cole no campo **Webhook Secret** nas configurações
+7. Salve as configurações
+
+#### Funcionalidades
+- ✅ **Checkout Pro**: Redirecionamento para Mercado Pago
+- ✅ **Múltiplas Formas de Pagamento**: Cartão, PIX, boleto, saldo em conta
+- ✅ **Webhooks Automáticos**: Confirmação automática de pagamentos
+- ✅ **Validação de Assinatura**: Webhooks validados com HMAC-SHA256 para segurança
+- ✅ **Rastreamento**: ID do pagamento armazenado no pedido
+- ✅ **URLs de Retorno**: Redirecionamento após pagamento (sucesso/falha/pendente)
+
+### Pagamento em Dinheiro
+Para pagamentos em dinheiro na entrega:
+
+1. **Cliente** seleciona "Dinheiro" no checkout
+2. **Admin** recebe o pedido com status "Pendente"
+3. **Admin** confirma o pagamento após receber o dinheiro
+4. Sistema atualiza status para "Pago"
+
 ## Recursos para Implementação Futura
 - Sistema de cupons e descontos
 - Filtros avançados de busca
 - Página de recomendações baseada em histórico
-- Gateway de pagamento real (Stripe, PagSeguro)
 - Notificações por email
 - Sistema de avaliações de produtos
 - Chat de suporte
@@ -266,4 +304,4 @@ Sistema desenvolvido por **João Layon** com Flask, SQLite3 e Tailwind CSS.
 
 ---
 
-**Última atualização**: 15 de Outubro de 2025
+**Última atualização**: 18 de Outubro de 2025

@@ -341,6 +341,34 @@ def atualizar_status_pedido(id):
     flash('Status do pedido atualizado com sucesso!', 'success')
     return redirect(url_for('admin.pedido_detalhes', id=id))
 
+@admin_bp.route('/pedidos/<int:id>/confirmar-pagamento', methods=['POST'])
+@admin_required
+def confirmar_pagamento(id):
+    pedido = query_db('SELECT * FROM pedidos WHERE id = ?', [id], one=True)
+    
+    if not pedido:
+        flash('Pedido não encontrado.', 'danger')
+        return redirect(url_for('admin.pedidos'))
+    
+    if pedido['metodo_pagamento'] != 'dinheiro':
+        flash('Apenas pagamentos em dinheiro podem ser confirmados manualmente.', 'warning')
+        return redirect(url_for('admin.pedido_detalhes', id=id))
+    
+    execute_db('''
+        UPDATE pedidos 
+        SET confirmado_admin = 1, 
+            data_confirmacao_admin = CURRENT_TIMESTAMP, 
+            status = 'pago',
+            atualizado_em = CURRENT_TIMESTAMP
+        WHERE id = ?
+    ''', (id,))
+    
+    execute_db('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
+               (session['user_id'], 'confirmar_pagamento_dinheiro', f'Pagamento em dinheiro confirmado para pedido ID {id}'))
+    
+    flash('Pagamento em dinheiro confirmado com sucesso!', 'success')
+    return redirect(url_for('admin.pedido_detalhes', id=id))
+
 @admin_bp.route('/faturamento')
 @admin_required
 def faturamento():
@@ -448,6 +476,9 @@ def configuracoes():
         local_retirada = request.form.get('local_retirada')
         email_notificacao = request.form.get('email_notificacao')
         comissao_percentual = request.form.get('comissao_percentual', '10.0')
+        mercadopago_access_token = request.form.get('mercadopago_access_token', '').strip()
+        mercadopago_public_key = request.form.get('mercadopago_public_key', '').strip()
+        mercadopago_webhook_secret = request.form.get('mercadopago_webhook_secret', '').strip()
         
         try:
             comissao_percentual = float(comissao_percentual)
@@ -465,14 +496,21 @@ def configuracoes():
                 UPDATE configuracoes_loja 
                 SET nome_loja = ?, descricao_loja = ?, email_contato = ?, 
                     telefone_contato = ?, endereco = ?, local_retirada = ?, 
-                    email_notificacao = ?, comissao_percentual = ?, atualizado_em = CURRENT_TIMESTAMP
+                    email_notificacao = ?, comissao_percentual = ?, 
+                    mercadopago_access_token = ?, mercadopago_public_key = ?,
+                    mercadopago_webhook_secret = ?,
+                    atualizado_em = CURRENT_TIMESTAMP
                 WHERE id = 1
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao, comissao_percentual))
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, 
+                  email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret))
         else:
             execute_db('''
-                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao, comissao_percentual)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, email_notificacao, comissao_percentual))
+                INSERT INTO configuracoes_loja (nome_loja, descricao_loja, email_contato, telefone_contato, 
+                                                endereco, local_retirada, email_notificacao, comissao_percentual,
+                                                mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (nome_loja, descricao_loja, email_contato, telefone_contato, endereco, local_retirada, 
+                  email_notificacao, comissao_percentual, mercadopago_access_token, mercadopago_public_key, mercadopago_webhook_secret))
         
         execute_db('INSERT INTO logs_admin (usuario_id, acao, detalhes) VALUES (?, ?, ?)',
                    (session['user_id'], 'atualizar_configuracoes', 'Configurações da loja atualizadas'))
@@ -490,7 +528,10 @@ def configuracoes():
             'endereco': '',
             'local_retirada': '',
             'email_notificacao': '',
-            'comissao_percentual': 10.0
+            'comissao_percentual': 10.0,
+            'mercadopago_access_token': '',
+            'mercadopago_public_key': '',
+            'mercadopago_webhook_secret': ''
         }
     return render_template('admin/configuracoes.html', config=config)
 
