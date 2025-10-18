@@ -7,6 +7,8 @@ echo "🚀 Iniciando aplicação..."
 if [ ! -f "ecommerce.db" ]; then
     echo "📦 Banco de dados não encontrado. Inicializando..."
     python init_db.py
+    echo "🌱 Adicionando produtos de amostra..."
+    python seed_products.py
 else
     echo "✓ Banco de dados já existe"
 fi

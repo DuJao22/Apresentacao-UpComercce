@@ -38,6 +38,7 @@ git push
 
 - Verifica se o banco de dados existe
 - Se não existir, cria as tabelas e dados iniciais
+- Adiciona **19 produtos de amostra** automaticamente
 - Inicia o servidor Gunicorn
 
 ## 👤 Usuário Administrador Padrão
@@ -64,9 +65,11 @@ Se quiser persistência de dados, você deve:
 ## 🆘 Problemas Comuns
 
 ### O site está no ar mas não mostra produtos
-- Isso é normal na primeira execução
-- Faça login como admin e adicione produtos pelo painel administrativo
+- Se você seguiu todos os passos corretamente, 19 produtos de amostra devem aparecer automaticamente
+- Se não aparecerem, verifique os logs do deploy para ver se o seed foi executado
+- Você também pode adicionar mais produtos fazendo login como admin
 
 ### Erro "no such table"
 - Verifique se o Start Command está configurado corretamente: `bash start.sh`
 - Verifique os logs do deploy para ver se o banco foi inicializado
+- Faça um redeploy manual se necessário
