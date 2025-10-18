@@ -62,6 +62,8 @@ ecommerce/
 - Até 5 imagens por produto
 - Atributos opcionais (cor, tamanho) com variações
 - Busca e filtros
+- **18 Produtos de Exemplo**: Catálogo pré-populado com 5 perfumes, 6 roupas e 7 acessórios
+- **54 Imagens Profissionais**: 3 fotos de stock de alta qualidade para cada produto
 
 ### ✅ Carrinho e Checkout
 - Carrinho persistente na sessão
@@ -104,6 +106,10 @@ ecommerce/
   - 🚚 Saiu para Entrega (para entrega em casa)
   - 🎉 Entregue/Retirado
   - ❌ Cancelado
+- **Reset de Banco de Dados**: Opção para resetar produtos e categorias preservando histórico de pedidos
+  - Produtos usados em pedidos: desativados (dados preservados)
+  - Produtos nunca comprados: deletados permanentemente
+  - Categorias: desativadas
 
 ### ✅ Área do Cliente (Nova!)
 - **Dashboard Profissional**: Estatísticas de compras, pedidos recentes, acesso rápido
@@ -305,3 +311,22 @@ Sistema desenvolvido por **João Layon** com Flask, SQLite3 e Tailwind CSS.
 ---
 
 **Última atualização**: 18 de Outubro de 2025
+
+## Alterações Recentes (18/10/2025)
+
+### ✅ Correções Implementadas
+1. **Bug de Status Corrigido**: Resolvida inconsistência na exibição de status de pedidos na área do cliente
+   - Timelines agora mostram corretamente as bolinhas coloridas para todos os status
+   - Status "Pronto para Retirada" e "Saiu para Entrega" agora funcionam perfeitamente
+   
+2. **Catálogo Completo**: Sistema agora inclui 18 produtos de exemplo profissionais
+   - 5 Perfumes premium (Essência Floral, Amadeirado Intenso, Lavanda Suave, Oriental Misterioso, Citrus Fresh)
+   - 6 Roupas (Vestido, Camisa Social, Calça Jeans, Blazer, Saia, Camiseta)
+   - 7 Acessórios (Bolsa, Relógio, Óculos, Carteira, Cinto, Colar, Pulseira)
+   - Cada produto com 3 fotos profissionais de stock = 54 imagens no total
+
+3. **Funcionalidade de Reset**: Nova opção no painel administrativo
+   - Permite resetar todo o catálogo de produtos e categorias
+   - Inteligente: preserva produtos usados em pedidos (apenas desativa)
+   - Seguro: histórico de pedidos 100% preservado
+   - Transação atômica com rollback em caso de erro
